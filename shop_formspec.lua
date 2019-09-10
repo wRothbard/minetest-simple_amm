@@ -49,116 +49,7 @@ local function player_has_used_tool(player_inv, pay_stack)
 	return false
 end
 
-local function can_exchange(player_inv, shop_inv, send_inv, refill_inv, pay_stack, give_stack, is_unlimited)
-	local player_inv_copy = smartshop.util.clone_tmp_inventory("smartshop_tmp_player_inv", player_inv, "main")
-	local shop_inv_copy = smartshop.util.clone_tmp_inventory("smartshop_tmp_shop_inv", shop_inv, "main")
-	local send_inv_copy = send_inv and smartshop.util.clone_tmp_inventory("smartshop_tmp_send_inv", send_inv, "main")
-	local refill_inv_copy = refill_inv and smartshop.util.clone_tmp_inventory("smartshop_tmp_refill_inv", refill_inv, "main")
 
-	local function helper()
-		if is_unlimited then
-			local removed = player_inv_copy:remove_item("main", pay_stack)
-			if removed:get_count() < pay_stack:get_count() then
-				return false, "you lack sufficient payment"
-			end
-			local leftover = player_inv_copy:add_item("main", give_stack)
-			if not leftover:is_empty() then
-				return false, "your inventory is full"
-			end
-		else
-			local sold_thing
-			if refill_inv_copy then
-				sold_thing = refill_inv_copy:remove_item("main", give_stack)
-				local sold_count = sold_thing:get_count()
-				local still_need = give_stack:get_count() - sold_count
-				if still_need ~= 0 then
-					sold_thing = shop_inv_copy:remove_item("main", {name = give_stack:get_name(), count = still_need})
-					sold_thing:set_count(sold_thing:get_count() + sold_count)
-				end
-			else
-				sold_thing = shop_inv_copy:remove_item("main", give_stack)
-			end
-			if sold_thing:get_count() < give_stack:get_count() then
-				return false, ("%s is sold out"):format(give_stack:to_string())
-			end
-			local payment    = player_inv_copy:remove_item("main", pay_stack)
-			if payment:get_count() < pay_stack:get_count() then
-				return false, "you lack sufficient payment"
-			end
-			local leftover   = player_inv_copy:add_item("main", sold_thing)
-			if not leftover:is_empty() then
-				return false, "your inventory is full"
-			end
-			if send_inv_copy then
-				leftover = send_inv_copy:add_item("main", payment)
-				leftover = shop_inv_copy:add_item("main", leftover)
-			else
-				leftover = shop_inv_copy:add_item("main", payment)
-			end
-			leftover = shop_inv_copy:add_item("main", payment)
-			if not leftover:is_empty() then
-				return false, "the shop is full"
-			end
-		end
-
-		return true
-	end
-
-	local rv, reason = helper()
-
-	smartshop.util.delete_tmp_inventory("smartshop_tmp_player_inv")
-	smartshop.util.delete_tmp_inventory("smartshop_tmp_shop_inv")
-	smartshop.util.delete_tmp_inventory("smartshop_tmp_send_inv")
-	smartshop.util.delete_tmp_inventory("smartshop_tmp_refill_inv")
-
-	return rv, reason
-end
-
-local function process_purchase(player_inv, shop_inv, send_inv, refill_inv, pay_stack, give_stack, is_unlimited)
-	if is_unlimited then
-		local removed = player_inv:remove_item("main", pay_stack)
-		if removed:get_count() < pay_stack:get_count() then
-			smartshop.log("error", "failed to extract full payment using creative shop (missing: %s)", removed:to_string())
-		end
-		local leftover = player_inv:add_item("main", give_stack)
-		if not leftover:is_empty() then
-			smartshop.log("error", "player did not receive full amount when using creative shop (leftover: %s)", leftover:to_string())
-		end
-	else
-		local payment    = player_inv:remove_item("main", pay_stack)
-		if payment:get_count() < pay_stack:get_count() then
-			smartshop.log("error", "failed to extract full purchase from shop (missing: %s)", payment:to_string())
-		end
-		local sold_thing
-		if refill_inv then
-			sold_thing = refill_inv:remove_item("main", give_stack)
-			local sold_count = sold_thing:get_count()
-			local still_need = give_stack:get_count() - sold_count
-			if still_need ~= 0 then
-				sold_thing = shop_inv:remove_item("main", {name = give_stack:get_name(), count = still_need})
-				sold_thing:set_count(sold_thing:get_count() + sold_count)
-			end
-		else
-			sold_thing = shop_inv:remove_item("main", give_stack)
-		end
-		if sold_thing:get_count() < give_stack:get_count() then
-			smartshop.log("error", "failed to extract full payment (missing: %s)", sold_thing:to_string())
-		end
-		local leftover   = player_inv:add_item("main", sold_thing)
-		if not leftover:is_empty() then
-			smartshop.log("error", "player did not receive full amount from shop (leftover: %s)", leftover:to_string())
-		end
-		if send_inv then
-			leftover = send_inv:add_item("main", payment)
-			leftover = shop_inv:add_item("main", leftover)
-		else
-			leftover = shop_inv:add_item("main", payment)
-		end
-		if not leftover:is_empty() then
-			smartshop.log("error", "shop did not receive full payment (leftover: %s)", leftover:to_string())
-		end
-	end
-end
 
 local function buy_item_n(player, pos, n)
     local player_name      = player:get_player_name()
@@ -192,17 +83,28 @@ local function buy_item_n(player, pos, n)
 		return
 	end
 
-	local exchange_possible, reason_why_not = can_exchange(player_inv, shop_inv, send_inv, refill_inv, pay_stack, give_stack, is_unlimited)
+	--[[1. can we do a direct exchange? if not ...
+		2. can we do a direct exchange, augmented with lurkcoin? if not...
+		3. can we construct an exchange by changing some bills? if not...
+		4. can we construct an exchange by changing some bills, augmented by lurkcoin?
+	]]--
+
+	local can_pay_with_lurkcoin = false
+	if is_pay_currency and not is_give_currency and smartshop.settings.enable_lurkcoin then
+		can_pay_with_lurkcoin = smartshop.can_pay_with_lurkcoin(pay_stack)
+	end
+
+	local exchange_possible, reason_why_not = smartshop.can_exchange(player_inv, shop_inv, send_inv, refill_inv, pay_stack, give_stack, is_unlimited, can_pay_with_lurkcoin, player_name)
 
 	if exchange_possible then
-		process_purchase(player_inv, shop_inv, send_inv, refill_inv, pay_stack, give_stack, is_unlimited)
+		smartshop.process_purchase(player_inv, shop_inv, send_inv, refill_inv, pay_stack, give_stack, is_unlimited, can_pay_with_lurkcoin, player_name)
 		smartshop.log("action", "%s bought %q for %q from %s at %s", player_name, give_name, pay_name, shop_owner, spos)
 		smartshop.send_mesecon(pos)
 	elseif is_pay_currency and not is_give_currency then
 		local items_to_take, item_to_give
-		exchange_possible, items_to_take, item_to_give, reason_why_not = smartshop.can_exchange_currency(player_inv, shop_inv, send_inv, refill_inv, pay_stack, give_stack, is_unlimited)
+		exchange_possible, items_to_take, item_to_give, reason_why_not = smartshop.can_exchange_currency(player_inv, shop_inv, send_inv, refill_inv, pay_stack, give_stack, is_unlimited, can_pay_with_lurkcoin, player_name)
 		if exchange_possible then
-			smartshop.exchange_currency(player_inv, shop_inv, send_inv, refill_inv, items_to_take, item_to_give, pay_stack, give_stack, is_unlimited)
+			smartshop.exchange_currency(player_inv, shop_inv, send_inv, refill_inv, items_to_take, item_to_give, pay_stack, give_stack, is_unlimited, can_pay_with_lurkcoin, player_name)
 			smartshop.log("action", "%s bought %q for %q from %s at %s", player_name, give_name, pay_name, shop_owner, spos)
 			smartshop.send_mesecon(pos)
 		end
@@ -286,23 +188,41 @@ local function get_shop_owner_gui(spos, shop_meta, is_creative)
     return gui
 end
 
-local function get_shop_player_gui(spos, shop_inv)
-    return "size[8,6]"
+local function get_shop_player_gui(spos, shop_inv, player_name)
+	local pay1 = shop_inv:get_stack("pay1", 1)
+	local pay2 = shop_inv:get_stack("pay2", 1)
+	local pay3 = shop_inv:get_stack("pay3", 1)
+	local pay4 = shop_inv:get_stack("pay4", 1)
+
+    local gui = "size[8,6]"
 		.. "list[current_player;main;0,2.2;8,4;]"
 		.. "label[0,0.2;Item:]"
 		.. "label[0,1.2;Price:]"
 		.. "list[nodemeta:" .. spos .. ";give1;2,0;1,1;]"
-		.. "item_image_button[2,1;1,1;" .. shop_inv:get_stack("pay1", 1):get_name()
-		.. ";buy1;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay1", 1):get_count() .. "]"
+		.. "item_image_button[2,1;1,1;" .. pay1:get_name()
+		.. ";buy1;\n\n\b\b\b\b\b" .. pay1:get_count() .. "]"
 		.. "list[nodemeta:" .. spos .. ";give2;3,0;1,1;]"
-		.. "item_image_button[3,1;1,1;" .. shop_inv:get_stack("pay2", 1):get_name()
-		.. ";buy2;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay2", 1):get_count() .. "]"
+		.. "item_image_button[3,1;1,1;" .. pay2:get_name()
+		.. ";buy2;\n\n\b\b\b\b\b" .. pay2:get_count() .. "]"
 		.. "list[nodemeta:" .. spos .. ";give3;4,0;1,1;]"
-		.. "item_image_button[4,1;1,1;" .. shop_inv:get_stack("pay3", 1):get_name()
-		.. ";buy3;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay3", 1):get_count() .. "]"
+		.. "item_image_button[4,1;1,1;" .. pay3:get_name()
+		.. ";buy3;\n\n\b\b\b\b\b" .. pay3:get_count() .. "]"
 		.. "list[nodemeta:" .. spos .. ";give4;5,0;1,1;]"
-		.. "item_image_button[5,1;1,1;" .. shop_inv:get_stack("pay4", 1):get_name()
-		.. ";buy4;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay4", 1):get_count() .. "]"
+		.. "item_image_button[5,1;1,1;" .. pay4:get_name()
+		.. ";buy4;\n\n\b\b\b\b\b" .. pay4:get_count() .. "]"
+
+	if smartshop.settings.enable_lurkcoin then
+		local any_is_currency = (
+			smartshop.is_currency(pay1) or
+			smartshop.is_currency(pay2) or
+			smartshop.is_currency(pay3) or
+			smartshop.is_currency(pay4)
+		)
+		if any_is_currency then
+			gui = gui .. ("label[2.5,1.8;Your lurkcoin balance is \194\164%.2f]"):format(lurkcoin.bank.getbal(player_name))
+		end
+	end
+	return gui
 end
 
 function smartshop.shop_receive_fields(player, pressed)
@@ -356,7 +276,7 @@ function smartshop.shop_showform(pos, player, ignore_owner)
 
         gui = get_shop_owner_gui(fpos, meta, is_creative)
     else
-        gui = get_shop_player_gui(fpos, inv)
+        gui = get_shop_player_gui(fpos, inv, player_name)
     end
 
     smartshop.player_pos[player_name] = pos

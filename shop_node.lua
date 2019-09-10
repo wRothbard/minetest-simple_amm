@@ -208,6 +208,7 @@ function smartshop.is_smartshop(pos)
 end
 
 minetest.register_lbm({
+    -- smartshop redo turns the "line" items into indicators; repay the lost items if possible
     name              = "smartshop:repay_lost_stuff",
     nodenames         = {
         "smartshop:shop",
@@ -217,7 +218,6 @@ minetest.register_lbm({
     },
     run_at_every_load = false,
     action            = function(pos, node)
-        -- recoup lost inventory items if possible
         local meta = minetest.get_meta(pos)
         if smartshop.is_creative(meta) then return end
         local inv = smartshop.get_inventory(meta)

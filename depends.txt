@@ -1,5 +1,6 @@
 default
 currency?
+lurkcoin?
 mesecons?
 mesecons_mvps?
 tubelib?

@@ -58,6 +58,7 @@ function smartshop.update_shop_color(pos)
 
     local to_swap
     if total == 0 then
+        -- nothing for sale
         to_swap = "smartshop:shop_empty"
     elseif is_unlimited then
         to_swap = "smartshop:shop_admin"

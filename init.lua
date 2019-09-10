@@ -11,36 +11,32 @@ function smartshop.log(level, message, ...)
     minetest.log(level, ("[%s] %s"):format(modname, message))
 end
 
-smartshop.player_pos = {}
-smartshop.add_storage = {}
+smartshop.player_pos  = {}  -- for displaying the correct inventory
+smartshop.add_storage = {}  -- for linking smartshops to storage
 
 dofile(smartshop.modpath .. "/settings.lua")
 dofile(smartshop.modpath .. "/util.lua")
 
 dofile(smartshop.modpath .. "/metadata.lua")
 
-if smartshop.settings.has_currency and smartshop.settings.change_currency then
-    smartshop.log("action", "currency changing enabled")
-    dofile(smartshop.modpath .. "/currency.lua")
-else
-    smartshop.log("action", "currency changing disabled")
-    dofile(smartshop.modpath .. "/currency_no.lua")
-end
-dofile(smartshop.modpath .. "/mesecons.lua")
+dofile(smartshop.modpath .. "/shop_node.lua")
+dofile(smartshop.modpath .. "/storage_node.lua")
+
+dofile(smartshop.modpath .. "/interop/currency.lua")
+dofile(smartshop.modpath .. "/interop/lurkcoin.lua")
+dofile(smartshop.modpath .. "/interop/mesecons.lua")
+dofile(smartshop.modpath .. "/interop/tubelib.lua")
 
 dofile(smartshop.modpath .. "/entities.lua")
 
-dofile(smartshop.modpath .. "/shop_node.lua")
 dofile(smartshop.modpath .. "/shop_display.lua")
 dofile(smartshop.modpath .. "/shop_formspec.lua")
 dofile(smartshop.modpath .. "/shop_color.lua")
 
-dofile(smartshop.modpath .. "/storage_node.lua")
 dofile(smartshop.modpath .. "/storage_formspec.lua")
 
 dofile(smartshop.modpath .. "/crafting.lua")
 
-dofile(smartshop.modpath .. "/tubelib.lua")
 
 
 minetest.register_on_player_receive_fields(function(player, form, pressed)

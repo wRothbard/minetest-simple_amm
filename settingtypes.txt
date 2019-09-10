@@ -4,5 +4,11 @@ smartshop.max_wifi_distance (Smartshop max storage distance) int 30 0 113512
 # Number of seconds to link external storage
 smartshop.wifi_link_time (Smartshop storage link time) int 30 0 3600
 
-# Enable currency changing (experimental feature).
+# Enable automatic currency changing.
 smartshop.change_currency (Enable currency changing) bool true
+
+# Enable lurkcoin support (experimental feature).
+smartshop.enable_lurkcoin (Enable lurkcoin support) bool false
+
+# Create a fake lurkcoin interface for testing purposes.
+smartshop.mock_lurkcoin (Mock lurkcoin) bool false
