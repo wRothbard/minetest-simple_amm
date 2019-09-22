@@ -9,6 +9,3 @@ smartshop.change_currency (Enable currency changing) bool true
 
 # Enable lurkcoin support (experimental feature).
 smartshop.enable_lurkcoin (Enable lurkcoin support) bool false
-
-# Create a fake lurkcoin interface for testing purposes.
-smartshop.mock_lurkcoin (Mock lurkcoin) bool false

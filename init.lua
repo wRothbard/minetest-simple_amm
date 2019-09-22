@@ -23,7 +23,6 @@ dofile(smartshop.modpath .. "/shop_node.lua")
 dofile(smartshop.modpath .. "/storage_node.lua")
 
 dofile(smartshop.modpath .. "/interop/currency.lua")
-dofile(smartshop.modpath .. "/interop/lurkcoin.lua")
 dofile(smartshop.modpath .. "/interop/mesecons.lua")
 dofile(smartshop.modpath .. "/interop/tubelib.lua")
 

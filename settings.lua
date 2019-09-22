@@ -1,10 +1,6 @@
 smartshop.settings = {}
 local settings = minetest.settings
 
-if settings:get_bool("smartshop.mock_lurkcoin", false) and not minetest.global_exists("lurkcoin") then
-    dofile(smartshop.modpath .. "/interop/mock_lurkcoin.lua")
-end
-
 smartshop.settings.has_mesecon = minetest.global_exists("mesecon")
 local has_currency = minetest.get_modpath("currency")
 local has_lurkcoin = minetest.global_exists("lurkcoin")
