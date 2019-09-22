@@ -29,14 +29,14 @@ function smartshop.update_shop_color(pos)
         return
     end
     local shop_meta    = minetest.get_meta(pos)
-    local shop_inv     = smartshop.get_inventory(shop_meta)
-    local is_unlimited = smartshop.is_unlimited(shop_meta)
-	local send_spos    = smartshop.get_send_spos(shop_meta)
+    local shop_inv     = smartshop.meta.get_inventory(shop_meta)
+    local is_unlimited = smartshop.meta.is_unlimited(shop_meta)
+    local send_spos    = smartshop.meta.get_send_spos(shop_meta)
     local send_pos     = smartshop.util.string_to_pos(send_spos)
-	local send_inv     = send_pos and minetest.get_meta(send_pos):get_inventory()
-	local refill_spos  = smartshop.get_refill_spos(shop_meta)
+    local send_inv     = send_pos and minetest.get_meta(send_pos):get_inventory()
+    local refill_spos  = smartshop.meta.get_refill_spos(shop_meta)
     local refill_pos   = smartshop.util.string_to_pos(refill_spos)
-	local refill_inv   = refill_pos and minetest.get_meta(refill_pos):get_inventory()
+    local refill_inv   = refill_pos and minetest.get_meta(refill_pos):get_inventory()
 
     local total        = 4
     local full_count   = 0

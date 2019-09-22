@@ -18,6 +18,7 @@ dofile(smartshop.modpath .. "/settings.lua")
 dofile(smartshop.modpath .. "/util.lua")
 
 dofile(smartshop.modpath .. "/metadata.lua")
+dofile(smartshop.modpath .. "/exchange.lua")
 
 dofile(smartshop.modpath .. "/shop_node.lua")
 dofile(smartshop.modpath .. "/storage_node.lua")

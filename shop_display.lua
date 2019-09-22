@@ -18,13 +18,13 @@ local entities_by_pos = {}
 
 local function get_inv_totals(shop_inv, refill_inv)
     local inv_totals = {}
-	for i = 1, 32 do
-		local stack = shop_inv:get_stack("main", i)
-		if not stack:is_empty() and stack:is_known() and stack:get_wear() == 0 then
-			local name = stack:get_name()
-			inv_totals[name] = (inv_totals[name] or 0) + stack:get_count()
-		end
-	end
+    for i = 1, 32 do
+        local stack = shop_inv:get_stack("main", i)
+        if not stack:is_empty() and stack:is_known() and stack:get_wear() == 0 then
+            local name = stack:get_name()
+            inv_totals[name] = (inv_totals[name] or 0) + stack:get_count()
+        end
+    end
     if refill_inv then
         for i = 1, (12*5) do
             local stack = refill_inv:get_stack("main", i)
@@ -40,21 +40,21 @@ end
 local function get_info_lines(owner, shop_inv, inv_totals)
     local lines = {("(Smartshop by %s) Purchases left:"):format(owner)}
     for i = 1, 4, 1 do
-		local pay_stack  = shop_inv:get_stack("pay" .. i, 1)
-		local give_stack = shop_inv:get_stack("give" .. i, 1)
-		if not pay_stack:is_empty() and not give_stack:is_empty() and give_stack:is_known() and give_stack:get_wear() == 0 then
-			local name  = give_stack:get_name()
-	        local count = give_stack:get_count()
-			local stock = inv_totals[name] or 0
-			local buy   = math.floor(stock / count)
-			if buy ~= 0 then
-				local def         = give_stack:get_definition()
-				local description = (def["description"] or ""):match("^[^\n]*")
+        local pay_stack  = shop_inv:get_stack("pay" .. i, 1)
+        local give_stack = shop_inv:get_stack("give" .. i, 1)
+        if not pay_stack:is_empty() and not give_stack:is_empty() and give_stack:is_known() and give_stack:get_wear() == 0 then
+            local name  = give_stack:get_name()
+            local count = give_stack:get_count()
+            local stock = inv_totals[name] or 0
+            local buy   = math.floor(stock / count)
+            if buy ~= 0 then
+                local def         = give_stack:get_definition()
+                local description = (def["description"] or ""):match("^[^\n]*")
                 if description == "" then description = name end
-				local message     = ("(%i) %s"):format(buy, description)
-				table.insert(lines, message)
-			end
-		end
+                local message     = ("(%i) %s"):format(buy, description)
+                table.insert(lines, message)
+            end
+        end
     end
     return lines
 end
@@ -63,28 +63,28 @@ function smartshop.update_shop_info(pos)
     if not smartshop.is_smartshop(pos) then return end
 
     local shop_meta = minetest.get_meta(pos)
-    local owner     = smartshop.get_owner(shop_meta)
+    local owner     = smartshop.meta.get_owner(shop_meta)
 
-	if smartshop.is_unlimited(shop_meta) then
-        smartshop.set_infotext(shop_meta, "(Smartshop by %s) Stock is unlimited", owner)
+    if smartshop.meta.is_unlimited(shop_meta) then
+        smartshop.meta.set_infotext(shop_meta, "(Smartshop by %s) Stock is unlimited", owner)
         return
     end
 
-    local shop_inv     = smartshop.get_inventory(shop_meta)
-	local refill_spos  = smartshop.get_refill_spos(shop_meta)
+    local shop_inv     = smartshop.meta.get_inventory(shop_meta)
+    local refill_spos  = smartshop.meta.get_refill_spos(shop_meta)
     local refill_pos   = smartshop.util.string_to_pos(refill_spos)
     local refill_inv
     if refill_pos then
-        refill_inv = smartshop.get_inventory(refill_pos)
+        refill_inv = smartshop.meta.get_inventory(refill_pos)
     end
 
-	local inv_totals = get_inv_totals(shop_inv, refill_inv)
-	local lines = get_info_lines(owner, shop_inv, inv_totals)
+    local inv_totals = get_inv_totals(shop_inv, refill_inv)
+    local lines = get_info_lines(owner, shop_inv, inv_totals)
 
     if #lines == 1 then
-        smartshop.set_infotext(shop_meta, "(Smartshop by %s)\nThis shop is empty.", owner)
+        smartshop.meta.set_infotext(shop_meta, "(Smartshop by %s)\nThis shop is empty.", owner)
     else
-        smartshop.set_infotext(shop_meta, table.concat(lines, "\n"))
+        smartshop.meta.set_infotext(shop_meta, table.concat(lines, "\n"))
     end
 end
 
@@ -151,7 +151,7 @@ function smartshop.update_shop_display(pos)
     if not dir then return end
 
     local meta       = minetest.get_meta(pos)
-    local shop_inv   = smartshop.get_inventory(meta)
+    local shop_inv   = smartshop.meta.get_inventory(meta)
     local entity_pos = vector.add(pos, vector.multiply(dir, entity_offset))
 
     for index = 1, 4 do
@@ -166,8 +166,8 @@ function smartshop.update_shop_display(pos)
 end
 
 minetest.register_lbm({
-	name = "smartshop:load_shop",
-	nodenames = {
+    name = "smartshop:load_shop",
+    nodenames = {
         "smartshop:shop",
         "smartshop:shop_full",
         "smartshop:shop_empty",
@@ -175,7 +175,7 @@ minetest.register_lbm({
         "smartshop:shop_admin"
     },
     run_at_every_load = true,
-	action = function(pos, node)
+    action = function(pos, node)
         smartshop.clear_shop_display(pos)
         remove_entities(pos)
         smartshop.update_shop_display(pos)
@@ -196,7 +196,7 @@ minetest.register_lbm({
             end
         end
         meta:from_table(metatable)
-	end,
+    end,
 })
 
 minetest.register_on_shutdown(function()

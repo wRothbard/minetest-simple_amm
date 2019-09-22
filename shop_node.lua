@@ -10,13 +10,13 @@ end
 
 local function tube_can_insert(pos, node, stack, direction)
     local meta = minetest.get_meta(pos)
-    local inv  = smartshop.get_inventory(meta)
+    local inv  = smartshop.meta.get_inventory(meta)
     return inv:room_for_item("main", stack)
 end
 
 local function tube_insert(pos, node, stack, direction)
     local meta  = minetest.get_meta(pos)
-    local inv   = smartshop.get_inventory(meta)
+    local inv   = smartshop.meta.get_inventory(meta)
     local added = inv:add_item("main", stack)
     smartshop.update_shop_color(pos)
     return added
@@ -25,18 +25,18 @@ end
 local function after_place_node(pos, placer)
     local shop_meta   = minetest.get_meta(pos)
     local player_name = placer:get_player_name()
-    local is_creative = smartshop.util.player_is_creative(player_name) and 1 or 0
-    smartshop.set_owner(shop_meta, player_name)
-    smartshop.set_infotext(shop_meta, ("Shop by: %s"):format(player_name))
-    smartshop.set_creative(shop_meta, is_creative)
-    smartshop.set_unlimited(shop_meta, is_creative)
+    local is_creative = smartshop.util.player_is_creative(player_name)
+    smartshop.meta.set_owner(shop_meta, player_name)
+    smartshop.meta.set_infotext(shop_meta, ("Shop by: %s"):format(player_name))
+    smartshop.meta.set_creative(shop_meta, is_creative)
+    smartshop.meta.set_unlimited(shop_meta, is_creative)
     smartshop.update_shop_color(pos)
 end
 
 local function on_construct(pos)
     local meta = minetest.get_meta(pos)
-    smartshop.set_state(meta, 0) -- mesecons?
-    local inv = smartshop.get_inventory(meta)
+    smartshop.meta.set_state(meta, 0) -- mesecons?
+    local inv = smartshop.meta.get_inventory(meta)
     inv:set_size("main", 32)
     inv:set_size("give1", 1)
     inv:set_size("pay1", 1)
@@ -58,7 +58,7 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
     elseif listname == "main" then
         return stack:get_count()
     else
-        local inv = smartshop.get_inventory(pos)
+        local inv = smartshop.meta.get_inventory(pos)
         inv:set_stack(listname, index, stack)
         return 0
     end
@@ -70,7 +70,7 @@ local function allow_metadata_inventory_take(pos, listname, index, stack, player
     elseif listname == "main" then
         return stack:get_count()
     else
-        local inv = smartshop.get_inventory(pos)
+        local inv = smartshop.meta.get_inventory(pos)
         inv:set_stack(listname, index, ItemStack(""))
         return 0
     end
@@ -82,7 +82,7 @@ local function allow_metadata_inventory_move(pos, from_list, from_index, to_list
     elseif from_list == "main" and to_list == "main" then
         return count
     elseif from_list == "main" then
-        local inv   = smartshop.get_inventory(pos)
+        local inv   = smartshop.meta.get_inventory(pos)
         local stack = inv:get_stack(from_list, from_index)
         if allow_metadata_inventory_put(pos, to_list, to_index, stack, player) ~= 0 then
             return count
@@ -90,7 +90,7 @@ local function allow_metadata_inventory_move(pos, from_list, from_index, to_list
             return 0
         end
     elseif to_list == "main" then
-        local inv   = smartshop.get_inventory(pos)
+        local inv   = smartshop.meta.get_inventory(pos)
         local stack = inv:get_stack(to_list, to_index)
         if allow_metadata_inventory_take(pos, from_list, from_index, stack, player) ~= 0 then
             return count
@@ -126,8 +126,8 @@ end
 
 local function can_dig(pos, player)
     local meta  = minetest.get_meta(pos)
-    local inv   = smartshop.get_inventory(meta)
-    local owner = smartshop.get_owner(meta)
+    local inv   = smartshop.meta.get_inventory(meta)
+    local owner = smartshop.meta.get_owner(meta)
     if (owner == "" or smartshop.util.can_access(player, pos)) and inv:is_empty("main") then
         smartshop.clear_shop_display(pos)
         return true
@@ -219,8 +219,8 @@ minetest.register_lbm({
     run_at_every_load = false,
     action            = function(pos, node)
         local meta = minetest.get_meta(pos)
-        if smartshop.is_creative(meta) then return end
-        local inv = smartshop.get_inventory(meta)
+        if smartshop.meta.is_creative(meta) then return end
+        local inv = smartshop.meta.get_inventory(meta)
         for index = 1, 4 do
             local pay_stack = inv:get_stack("pay" .. index, 1)
             if not pay_stack:is_empty() and inv:room_for_item("main", pay_stack) then

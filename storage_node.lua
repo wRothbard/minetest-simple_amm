@@ -10,13 +10,13 @@ end
 
 local function tube_can_insert(pos, node, stack, direction)
     local meta = minetest.get_meta(pos)
-    local inv  = smartshop.get_inventory(meta)
+    local inv  = smartshop.meta.get_inventory(meta)
     return inv:room_for_item("main", stack)
 end
 
 local function tube_insert(pos, node, stack, direction)
     local meta  = minetest.get_meta(pos)
-    local inv   = smartshop.get_inventory(meta)
+    local inv   = smartshop.meta.get_inventory(meta)
     local added = inv:add_item("main", stack)
     return added
 end
@@ -24,16 +24,16 @@ end
 local function after_place_node(pos, placer)
     local meta        = minetest.get_meta(pos)
     local player_name = placer:get_player_name()
-    smartshop.set_owner(meta, player_name)
-    smartshop.set_infotext(meta, ("External storage by: %s"):format(player_name))
+    smartshop.meta.set_owner(meta, player_name)
+    smartshop.meta.set_infotext(meta, ("External storage by: %s"):format(player_name))
 end
 
 local function on_construct(pos)
     local meta = minetest.get_meta(pos)
-    local inv = smartshop.get_inventory(meta)
+    local inv = smartshop.meta.get_inventory(meta)
     inv:set_size("main", 60)
-    smartshop.set_mesein(meta, 0)
-    smartshop.set_title(meta, "storage@" .. minetest.pos_to_string(pos))
+    smartshop.meta.set_mesein(meta, 0)
+    smartshop.meta.set_title(meta, "storage@" .. minetest.pos_to_string(pos))
 end
 
 local function on_rightclick(pos, node, player, itemstack, pointed_thing)
@@ -46,7 +46,7 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
     elseif listname == "main" then
         return stack:get_count()
     else
-        local inv = smartshop.get_inventory(pos)
+        local inv = smartshop.meta.get_inventory(pos)
         inv:set_stack(listname, index, stack)
         return 0
     end
@@ -58,7 +58,7 @@ local function allow_metadata_inventory_take(pos, listname, index, stack, player
     elseif listname == "main" then
         return stack:get_count()
     else
-        local inv = smartshop.get_inventory(pos)
+        local inv = smartshop.meta.get_inventory(pos)
         inv:set_stack(listname, index, ItemStack(""))
         return 0
     end
@@ -70,11 +70,11 @@ local function allow_metadata_inventory_move(pos, from_list, from_index, to_list
     elseif from_list == "main" and to_list == "main" then
         return count
     elseif from_list == "main" then
-        local inv   = smartshop.get_inventory(pos)
+        local inv   = smartshop.meta.get_inventory(pos)
         local stack = inv:get_stack(from_list, from_index)
         return allow_metadata_inventory_put(pos, to_list, to_index, stack, player)
     elseif to_list == "main" then
-        local inv   = smartshop.get_inventory(pos)
+        local inv   = smartshop.meta.get_inventory(pos)
         local stack = inv:get_stack(to_list, to_index)
         return allow_metadata_inventory_take(pos, from_list, from_index, stack, player)
     else
@@ -106,8 +106,8 @@ end
 
 local function can_dig(pos, player)
     local meta = minetest.get_meta(pos)
-    local inv  = smartshop.get_inventory(meta)
-    local owner = smartshop.get_owner(meta)
+    local inv  = smartshop.meta.get_inventory(meta)
+    local owner = smartshop.meta.get_owner(meta)
     if (owner == "" or smartshop.util.can_access(player, pos)) and inv:is_empty("main") then
         return true
     end

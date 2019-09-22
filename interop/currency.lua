@@ -43,15 +43,11 @@ for name, cents in pairs(known_currency) do
 end
 
 function smartshop.currency.is_currency(stack)
-    local name = stack:get_name()
-    return available_currency[name]
+    return available_currency[stack:get_name()]
 end
 
 function smartshop.currency.sum_currency_stack(stack)
-    local name = stack:get_name()
-    local count = stack:get_count()
-    local amount = available_currency[name] or 0
-    return amount * count
+    return (available_currency[stack:get_name()] or 0) * stack:get_count()
 end
 
 function smartshop.currency.sum_inv(inv, list_name)
@@ -62,4 +58,8 @@ function smartshop.currency.sum_inv(inv, list_name)
         total = total + smartshop.sum_currency_stack(stack)
     end
     return total
+end
+
+function smartshop.currency.extract_currency(stack, inv)
+    error("NOT IMPLEMENTED")
 end

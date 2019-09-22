@@ -24,7 +24,7 @@ function smartshop.util.can_access(player, pos)
     local player_name = player:get_player_name()
 
     return (
-        smartshop.get_owner(pos) == player_name or
+        smartshop.meta.get_owner(pos) == player_name or
         minetest.check_player_privs(player_name, { protection_bypass = true })
     )
 end

@@ -2,7 +2,7 @@ if minetest.global_exists("tubelib") then
     local _TUBELIB_CALLBACKS = {
         on_pull_item = function(pos, side, player_name)
             local meta = minetest.get_meta(pos)
-            if smartshop.get_owner(meta) ~= player_name then
+            if smartshop.meta.get_owner(meta) ~= player_name then
                 return nil
             end
             local inv = meta:get_inventory()
