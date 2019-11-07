@@ -104,6 +104,18 @@ local function on_activate(self, staticdata)
     self.object:set_properties({ textures = { image } })
 end
 
+local function on_activate_wielditem(self, staticdata)
+    local data = minetest.deserialize(staticdata)
+    if not data then
+        self.object:remove()
+        return
+    end
+    self.item  = data.item
+    self.pos   = data.pos
+    self.index = data.index
+    self.object:set_properties({ textures = {self.item} })
+end
+
 local function get_staticdata(self)
     return minetest.serialize({item=self.item, pos=self.pos, index=self.index})
 end
@@ -112,11 +124,22 @@ minetest.register_entity("smartshop:item", {
     hp_max         = 1,
     visual         = "sprite",
     visual_size    = { x = .40, y = .40 },
-    collisionbox   = { 0, 0, 0, 0, 0, 0 },
+    pointable      = false,
     physical       = false,
     textures       = { "air" },
     smartshop2     = true,
-    type           = "",
     on_activate    = on_activate,
+    get_staticdata = get_staticdata,
+})
+
+minetest.register_entity("smartshop:wielditem", {
+    hp_max         = 1,
+    visual         = "wielditem",
+    visual_size    = { x = .20, y = .20 },
+    pointable      = false,
+    physical       = false,
+    textures       = { "air" },
+    smartshop2     = true,
+    on_activate    = on_activate_wielditem,
     get_staticdata = get_staticdata,
 })

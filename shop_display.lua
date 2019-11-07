@@ -98,10 +98,18 @@ function smartshop.clear_shop_display(pos)
 end
 
 local function add_entity(pos, param2, index, item)
+    local def = minetest.registered_items[item]
+    local item_name
+    if def.drawtype == "nodebox" or def.drawtype == "mesh" then
+        item_name = "smartshop:wielditem"
+    else
+        item_name = "smartshop:item"
+    end
+
     local ep = element_pos[param2 + 1]
     local e  = minetest.add_entity(
         vector.add(pos, ep[index]),
-        "smartshop:item",
+        item_name,
         minetest.serialize({item=item, pos=pos, index=index})
     )
     e:set_yaw(math.pi * 2 - param2 * math.pi / 2)
@@ -154,10 +162,24 @@ function smartshop.update_shop_display(pos)
     local shop_inv   = smartshop.meta.get_inventory(meta)
     local entity_pos = vector.add(pos, vector.multiply(dir, entity_offset))
 
+    local refill_spos  = smartshop.meta.get_refill_spos(meta)
+    local refill_pos   = smartshop.util.string_to_pos(refill_spos)
+    local refill_inv
+    if refill_pos then
+        refill_inv = smartshop.meta.get_inventory(refill_pos)
+    end
+
+    local inv_totals = get_inv_totals(shop_inv, refill_inv)
+
     for index = 1, 4 do
         local give_stack = shop_inv:get_stack("give" .. index, 1)
-        if not give_stack:is_empty() and give_stack:is_known() then
-            local e = add_entity(entity_pos, param2, index, give_stack:get_name())
+        local give_name = give_stack:get_name()
+        local pay_stack  = shop_inv:get_stack("pay" .. index, 1)
+
+        if ((not give_stack:is_empty() and give_stack:is_known())
+                and (not pay_stack:is_empty() and pay_stack:is_known())
+                and ((inv_totals[give_name] or 0) > 0)) then
+            local e = add_entity(entity_pos, param2, index, give_name)
             set_entity(pos, index, e)
         else
             remove_entity(pos, index)
