@@ -275,7 +275,7 @@ local function get_shop_owner_gui(spos, shop_meta, is_admin)
     if is_unlimited then
         gui = gui .. "label[0.5,-0.4;Your stock is unlimited]"
     end
-    if is_admin then
+    if is_admin and false then
         gui = gui .. "button[6,1;2.2,1;togglelimit;Toggle limit]"
     end
     gui = gui
