@@ -1,8 +1,9 @@
+local fee_decimal = simple_amm.settings.fee_percent / 100
+
 simple_amm.recalc = function(pos)
-	if 0 == 0 then return end
 	local meta = minetest.get_meta(pos)
-	meta:set_string("item1", "")
-	meta:set_string("item2", "")
+	simple_amm.set_item1(meta, "")
+	simple_amm.set_item2(meta, "")
 	local inv = meta:get_inventory()
 	inv:set_stack("pay1", 1, ItemStack(""))
 	inv:set_stack("give1", 1, ItemStack(""))
@@ -16,7 +17,7 @@ simple_amm.recalc = function(pos)
 	local item2
 	local count1 = 0
 	local count2 = 0
-	for i = 1, main_stock_size, 1 do
+	for i = 1, 32, 1 do
 		local stack = inv:get_stack("main", i)
 		local name = stack:get_name()
 		-- minetest.log("action", "slot " .. i .. " " .. name)
@@ -37,8 +38,8 @@ simple_amm.recalc = function(pos)
 		end
 	end
 	if count1 ~= 0 and count2 ~= 0 then
-		meta:set_string("item1", item1)
-		meta:set_string("item2", item2)
+		simple_amm.set_item1(meta, item1)
+		simple_amm.set_item2(meta, item2)
 		-- minetest.log("action", "item1 " .. item1 .. " " .. count1)
 		-- minetest.log("action", "item2 " .. item2 .. " " .. count2)
 		local liquidity = count1 * count2

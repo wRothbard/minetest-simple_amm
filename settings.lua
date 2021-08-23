@@ -16,3 +16,6 @@ simple_amm.settings.admin_shop_priv = settings:get("simple_amm.admin_shop_priv")
 minetest.register_privilege(simple_amm.settings.admin_shop_priv, {
     description = "A privilege used to make simple_amms unlimited"
 })
+
+
+simple_amm.settings.fee_percent = settings:get("simple_amm.fee_percent") or 1
