@@ -17,7 +17,7 @@ function simple_amm.set_admin(pos_or_meta, value)
 end
 
 function simple_amm.is_unlimited(pos_or_meta)
-    return 0
+    return false
 end
 
 function simple_amm.set_unlimited(pos_or_meta, value)
