@@ -164,7 +164,7 @@ end
 
 local simple_amm_def                                 = {
     description                   = "Smartshop",
-    tiles                         = { "(default_chest_top.png^[colorize:#FFFFFF77)^default_obsidian_glass.png" },
+    tiles                         = { "(default_chest_top.png^[colorize:#FF777777)^default_obsidian_glass.png" },
     groups                        = { choppy                  = 2,
                                       oddly_breakable_by_hand = 1,
                                       tubedevice              = 1,
@@ -201,17 +201,17 @@ local simple_amm_def                                 = {
 
 local simple_amm_full_def                            = simple_amm.util.deepcopy(simple_amm_def)
 simple_amm_full_def.drop                             = "simple_amm:amm"
-simple_amm_full_def.tiles                            = { "(default_chest_top.png^[colorize:#FFFFFF77)^(default_obsidian_glass.png^[colorize:#0000FF77)" }
+simple_amm_full_def.tiles                            = { "(default_chest_top.png^[colorize:#FF777777)^(default_obsidian_glass.png^[colorize:#0000FF77)" }
 simple_amm_full_def.groups.not_in_creative_inventory = 1
 
 local simple_amm_empty_def                           = simple_amm.util.deepcopy(simple_amm_full_def)
-simple_amm_empty_def.tiles                           = { "(default_chest_top.png^[colorize:#FFFFFF77)^(default_obsidian_glass.png^[colorize:#FF000077)" }
+simple_amm_empty_def.tiles                           = { "(default_chest_top.png^[colorize:#FF777777)^(default_obsidian_glass.png^[colorize:#FF000077)" }
 
 local simple_amm_used_def                            = simple_amm.util.deepcopy(simple_amm_full_def)
-simple_amm_used_def.tiles                            = { "(default_chest_top.png^[colorize:#FFFFFF77)^(default_obsidian_glass.png^[colorize:#00FF0077)" }
+simple_amm_used_def.tiles                            = { "(default_chest_top.png^[colorize:#FF777777)^(default_obsidian_glass.png^[colorize:#00FF0077)" }
 
 local simple_amm_admin_def                           = simple_amm.util.deepcopy(simple_amm_full_def)
-simple_amm_admin_def.tiles                           = { "(default_chest_top.png^[colorize:#FFFFFF77)^(default_obsidian_glass.png^[colorize:#00FFFF77)" }
+simple_amm_admin_def.tiles                           = { "(default_chest_top.png^[colorize:#FF777777)^(default_obsidian_glass.png^[colorize:#00FFFF77)" }
 
 minetest.register_node("simple_amm:amm", simple_amm_def)
 minetest.register_node("simple_amm:amm_full", simple_amm_full_def)
