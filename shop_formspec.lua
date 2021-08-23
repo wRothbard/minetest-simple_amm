@@ -361,5 +361,5 @@ function simple_amm.shop_showform(pos, player, ignore_owner)
     end
 
     simple_amm.player_pos[player_name] = pos
-    minetest.after(0, minetest.show_formspec, player_name, "simple_amm.shop_showform", gui)
+    minetest.after(0.1, minetest.show_formspec, player_name, "simple_amm.shop_showform", gui)
 end
