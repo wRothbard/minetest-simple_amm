@@ -54,6 +54,9 @@ local function on_rightclick(pos, node, player, itemstack, pointed_thing)
 end
 
 local function allow_metadata_inventory_put(pos, listname, index, stack, player)
+    if string.match(listname, "^pay") or string.match(listname, "^give") then
+        return 0
+    end
     if not simple_amm.util.can_access(player, pos) then
         return 0
     elseif stack:get_wear() ~= 0 then
@@ -128,9 +131,6 @@ local function allow_metadata_inventory_move(pos, from_list, from_index, to_list
 end
 
 local function on_metadata_inventory_put(pos, listname, index, stack, player)
-    if string.match(listname, "^pay") or string.match(listname, "^give") then
-        return 0
-    end
     if listname == "main" then
         simple_amm.log("action", "%s put %q in %s @ %s",
                       player:get_player_name(),
