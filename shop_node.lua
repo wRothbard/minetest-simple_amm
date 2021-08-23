@@ -64,6 +64,16 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
     elseif stack:get_wear() ~= 0 then
         return 0
     elseif listname == "main" then
+        local item1 = simple_amm.get_item1(pos)
+        local item2 = simple_amm.get_item2(pos)
+	if item1 ~= nil and item1 ~= "" and item2 ~= nil and item2 ~= "" then  -- if two items already in inventory
+	    local newitem = stack:get_name()
+	    if newitem ~= nil and newitem ~= "" then  -- if newitem not blank
+	        if newitem ~= item1 and newitem ~= item2 then  -- if newitem doesn't match either
+	            return 0
+		end
+	    end
+	end
         return stack:get_count()
     else
         local inv = simple_amm.get_inventory(pos)
