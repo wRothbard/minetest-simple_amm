@@ -54,6 +54,7 @@ function simple_amm.update_shop_info(pos)
         return
     end
 
+    simple_amm.recalc(pos)
     local shop_inv     = simple_amm.get_inventory(shop_meta)
 	local refill_spos  = simple_amm.get_refill_spos(shop_meta)
     local refill_pos   = simple_amm.util.string_to_pos(refill_spos)

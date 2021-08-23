@@ -128,3 +128,23 @@ function simple_amm.get_refund(pos_or_meta)
         return minetest.parse_json(refund)
     end
 end
+
+function simple_amm.get_item1(pos_or_meta)
+    local meta = get_meta(pos_or_meta)
+    return meta:get_string("item1")
+end
+
+function simple_amm.set_item1(pos_or_meta, value)
+    local meta = get_meta(pos_or_meta)
+    meta:set_string("item1", value)
+end
+
+function simple_amm.get_item2(pos_or_meta)
+    local meta = get_meta(pos_or_meta)
+    return meta:get_string("item2")
+end
+
+function simple_amm.set_item2(pos_or_meta, value)
+    local meta = get_meta(pos_or_meta)
+    meta:set_string("item2", value)
+end

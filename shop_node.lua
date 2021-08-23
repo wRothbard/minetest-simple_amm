@@ -37,6 +37,8 @@ end
 local function on_construct(pos)
     local meta = minetest.get_meta(pos)
     simple_amm.set_state(meta, 0) -- mesecons?
+    simple_amm.set_item1(meta, "")
+    simple_amm.set_item2(meta, "")
     local inv = simple_amm.get_inventory(meta)
     inv:set_size("main", 32)
     inv:set_size("give1", 1)
@@ -138,6 +140,7 @@ local function on_metadata_inventory_put(pos, listname, index, stack, player)
                       minetest.get_node(pos).name,
                       minetest.pos_to_string(pos)
         )
+        simple_amm.recalc(pos)
     end
 end
 
@@ -149,6 +152,13 @@ local function on_metadata_inventory_take(pos, listname, index, stack, player)
                       minetest.get_node(pos).name,
                       minetest.pos_to_string(pos)
         )
+        simple_amm.recalc(pos)
+    end
+end
+
+local function on_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
+    if from_list == "main" or to_list == "main" then
+        simple_amm.recalc(pos)
     end
 end
 
@@ -195,6 +205,7 @@ local simple_amm_def                                 = {
     allow_metadata_inventory_move = allow_metadata_inventory_move,
     on_metadata_inventory_put     = on_metadata_inventory_put,
     on_metadata_inventory_take    = on_metadata_inventory_take,
+    on_metadata_inventory_move    = on_metadata_inventory_move,
     can_dig                       = can_dig,
     on_blast                      = function() end,
 }

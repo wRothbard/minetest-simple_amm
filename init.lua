@@ -26,6 +26,7 @@ dofile(simple_amm.modpath .. "/interop/mesecons.lua")
 dofile(simple_amm.modpath .. "/entities.lua")
 
 dofile(simple_amm.modpath .. "/shop_node.lua")
+dofile(simple_amm.modpath .. "/recalc.lua")
 dofile(simple_amm.modpath .. "/shop_display.lua")
 dofile(simple_amm.modpath .. "/shop_formspec.lua")
 dofile(simple_amm.modpath .. "/shop_color.lua")
