@@ -17,13 +17,10 @@ function simple_amm.set_admin(pos_or_meta, value)
 end
 
 function simple_amm.is_unlimited(pos_or_meta)
-    local meta = get_meta(pos_or_meta)
-    return meta:get_int("unlimited") == 1
+    return 0
 end
 
 function simple_amm.set_unlimited(pos_or_meta, value)
-    local meta = get_meta(pos_or_meta)
-    meta:set_int("unlimited", value and 1 or 0)
 end
 
 function simple_amm.get_owner(pos_or_meta)
