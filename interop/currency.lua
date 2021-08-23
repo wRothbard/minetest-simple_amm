@@ -1,12 +1,12 @@
-if not (smartshop.settings.has_currency and smartshop.settings.change_currency) then
-    smartshop.log("action", "currency changing disabled")
-    function smartshop.is_currency() end
-    function smartshop.can_exchange_currency() end
-    function smartshop.exchange_currency() end
+if not (simple_amm.settings.has_currency and simple_amm.settings.change_currency) then
+    simple_amm.log("action", "currency changing disabled")
+    function simple_amm.is_currency() end
+    function simple_amm.can_exchange_currency() end
+    function simple_amm.exchange_currency() end
     return
 end
 
-smartshop.log("action", "currency changing enabled")
+simple_amm.log("action", "currency changing enabled")
 
 local known_currency = {
     -- standard currency
@@ -44,7 +44,7 @@ local available_currency = {}
 for name, amount in pairs(known_currency) do
     if minetest.registered_items[name] then
         available_currency[name] = amount
-        smartshop.log("action", "available currency: %s=%q", name, tostring(amount))
+        simple_amm.log("action", "available currency: %s=%q", name, tostring(amount))
     end
 end
 
@@ -65,7 +65,7 @@ local function sum_inv(inv, list_name)
     return total
 end
 
-function smartshop.is_currency(stack)
+function simple_amm.is_currency(stack)
     local name = stack:get_name()
     return available_currency[name]
 end
@@ -110,7 +110,7 @@ local function get_whole_counts(currency_count_by_name, pay_amount)
     local currency_to_take = {}
     local remaining_amount = pay_amount
 
-    for currency_name, count in smartshop.util.pairs_by_keys(currency_count_by_name, sort_decreasing) do
+    for currency_name, count in simple_amm.util.pairs_by_keys(currency_count_by_name, sort_decreasing) do
         if remaining_amount == 0 then
             break
         end
@@ -135,7 +135,7 @@ end
 local function get_change_to_give(currency_count_by_name, currency_to_take, remaining_cents)
     -- find the smallest bill that exceeds the amount we need
     local currency_to_use
-    for currency_name, _ in smartshop.util.pairs_by_keys(currency_count_by_name, sort_increasing) do
+    for currency_name, _ in simple_amm.util.pairs_by_keys(currency_count_by_name, sort_increasing) do
         local currency_amount = available_currency[currency_name]
         if currency_amount >= remaining_cents then
             currency_to_use = currency_name
@@ -162,7 +162,7 @@ local function get_items_to_take(currency_to_take)
     return items_to_take
 end
 
-function smartshop.can_exchange_currency(player_inv, shop_inv, send_inv, refill_inv, pay_stack, give_stack, is_unlimited)
+function simple_amm.can_exchange_currency(player_inv, shop_inv, send_inv, refill_inv, pay_stack, give_stack, is_unlimited)
     --[[
         this function implements a quick-and-dirty change-making algorithm.
         it can return "false" when change-making is actually technically possible,
@@ -207,7 +207,7 @@ function smartshop.can_exchange_currency(player_inv, shop_inv, send_inv, refill_
     local items_to_take   = get_items_to_take(currency_to_take)
 
     -- create a temporary copy of the src_inv to check that we can take the determined bills, give change, and still give the exchanged item
-    local player_inv_copy = smartshop.util.clone_tmp_inventory("smartshop_tmp_player_inv", player_inv, "main")
+    local player_inv_copy = simple_amm.util.clone_tmp_inventory("simple_amm_tmp_player_inv", player_inv, "main")
     local function helper()
         for _, item_stack in ipairs(items_to_take) do
             local removed = player_inv_copy:remove_item("main", item_stack)
@@ -229,15 +229,15 @@ function smartshop.can_exchange_currency(player_inv, shop_inv, send_inv, refill_
         return true
     end
     local rv, message = helper()
-    smartshop.util.delete_tmp_inventory("smartshop_tmp_player_inv")
+    simple_amm.util.delete_tmp_inventory("simple_amm_tmp_player_inv")
     if not rv then
         return rv, nil, nil, message
     end
 
     if not is_unlimited then
-        local shop_inv_copy = smartshop.util.clone_tmp_inventory("smartshop_tmp_shop_inv", shop_inv, "main")
-        local send_inv_copy = send_inv and smartshop.util.clone_tmp_inventory("smartshop_tmp_send_inv", send_inv, "main")
-        local refill_inv_copy = refill_inv and smartshop.util.clone_tmp_inventory("smartshop_tmp_refill_inv", refill_inv, "main")
+        local shop_inv_copy = simple_amm.util.clone_tmp_inventory("simple_amm_tmp_shop_inv", shop_inv, "main")
+        local send_inv_copy = send_inv and simple_amm.util.clone_tmp_inventory("simple_amm_tmp_send_inv", send_inv, "main")
+        local refill_inv_copy = refill_inv and simple_amm.util.clone_tmp_inventory("simple_amm_tmp_refill_inv", refill_inv, "main")
 
         function helper()
             local sold_thing
@@ -268,9 +268,9 @@ function smartshop.can_exchange_currency(player_inv, shop_inv, send_inv, refill_
             return true
         end
         rv, message = helper()
-        smartshop.util.delete_tmp_inventory("smartshop_tmp_shop_inv")
-        smartshop.util.delete_tmp_inventory("smartshop_tmp_send_inv")
-        smartshop.util.delete_tmp_inventory("smartshop_tmp_refill_inv")
+        simple_amm.util.delete_tmp_inventory("simple_amm_tmp_shop_inv")
+        simple_amm.util.delete_tmp_inventory("simple_amm_tmp_send_inv")
+        simple_amm.util.delete_tmp_inventory("simple_amm_tmp_refill_inv")
         if not rv then
             return rv, nil, nil, message
         end
@@ -279,27 +279,27 @@ function smartshop.can_exchange_currency(player_inv, shop_inv, send_inv, refill_
     return true, items_to_take, change_to_give
 end
 
-function smartshop.exchange_currency(player_inv, shop_inv, send_inv, refill_inv, items_to_take, item_to_give, pay_stack, give_stack, is_unlimited)
+function simple_amm.exchange_currency(player_inv, shop_inv, send_inv, refill_inv, items_to_take, item_to_give, pay_stack, give_stack, is_unlimited)
 	if is_unlimited then
         for _, item_to_take in pairs(items_to_take) do
             local removed = player_inv:remove_item("main", item_to_take)
             if removed:get_count() < item_to_take:get_count() then
-                smartshop.log("error", "(ec) failed to extract full payment using admin shop (missing: %s)", removed:to_string())
+                simple_amm.log("error", "(ec) failed to extract full payment using admin shop (missing: %s)", removed:to_string())
             end
         end
 		local leftover = player_inv:add_item("main", item_to_give)
 		if not leftover:is_empty() then
-			smartshop.log("error", "(ec) player did not receive full *change* amount when using admin shop (leftover: %s)", leftover:to_string())
+			simple_amm.log("error", "(ec) player did not receive full *change* amount when using admin shop (leftover: %s)", leftover:to_string())
 		end
         leftover = player_inv:add_item("main", give_stack)
 		if not leftover:is_empty() then
-			smartshop.log("error", "(ec) player did not receive full amount when using admin shop (leftover: %s)", leftover:to_string())
+			simple_amm.log("error", "(ec) player did not receive full amount when using admin shop (leftover: %s)", leftover:to_string())
 		end
 	else
         for _, item_to_take in pairs(items_to_take) do
             local payment    = player_inv:remove_item("main", item_to_take)
             if payment:get_count() < item_to_take:get_count() then
-                smartshop.log("error", "(ec) failed to extract full purchase from shop (missing: %s)", payment:to_string())
+                simple_amm.log("error", "(ec) failed to extract full purchase from shop (missing: %s)", payment:to_string())
             end
         end
 		local sold_thing
@@ -316,11 +316,11 @@ function smartshop.exchange_currency(player_inv, shop_inv, send_inv, refill_inv,
 		end
 		local leftover   = player_inv:add_item("main", sold_thing)
 		if not leftover:is_empty() then
-			smartshop.log("error", "(ec) player did not receive full amount from shop (leftover: %s)", leftover:to_string())
+			simple_amm.log("error", "(ec) player did not receive full amount from shop (leftover: %s)", leftover:to_string())
 		end
         leftover   = player_inv:add_item("main", item_to_give)
 		if not leftover:is_empty() then
-			smartshop.log("error", "(ec) player did not receive full *change* amount (leftover: %s)", leftover:to_string())
+			simple_amm.log("error", "(ec) player did not receive full *change* amount (leftover: %s)", leftover:to_string())
 		end
 		if send_inv then
 			leftover = send_inv:add_item("main", pay_stack)
@@ -329,7 +329,7 @@ function smartshop.exchange_currency(player_inv, shop_inv, send_inv, refill_inv,
 			leftover = shop_inv:add_item("main", pay_stack)
 		end
 		if not leftover:is_empty() then
-			smartshop.log("error", "(ec) shop did not receive full payment (leftover: %s)", leftover:to_string())
+			simple_amm.log("error", "(ec) shop did not receive full payment (leftover: %s)", leftover:to_string())
 		end
 	end
 end

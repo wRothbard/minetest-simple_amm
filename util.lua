@@ -1,6 +1,6 @@
-smartshop.util = {}
+simple_amm.util = {}
 
-function smartshop.util.string_to_pos(spos)
+function simple_amm.util.string_to_pos(spos)
     -- can't just use minetest.string_to_pos, for sake of backward compatibility
     if not spos or type(spos) ~= "string" then
         return nil
@@ -11,22 +11,22 @@ function smartshop.util.string_to_pos(spos)
     end
 end
 
-smartshop.util.pos_to_string = minetest.pos_to_string
+simple_amm.util.pos_to_string = minetest.pos_to_string
 
-function smartshop.util.player_is_admin(player_name)
-    return minetest.check_player_privs(player_name, {[smartshop.settings.admin_shop_priv] = true})
+function simple_amm.util.player_is_admin(player_name)
+    return minetest.check_player_privs(player_name, {[simple_amm.settings.admin_shop_priv] = true})
 end
 
-function smartshop.util.can_access(player, pos)
+function simple_amm.util.can_access(player, pos)
     local player_name = player:get_player_name()
 
     return (
-        smartshop.get_owner(pos) == player_name or
+        simple_amm.get_owner(pos) == player_name or
         minetest.check_player_privs(player_name, { protection_bypass = true })
     )
 end
 
-function smartshop.util.deepcopy(orig, copies)
+function simple_amm.util.deepcopy(orig, copies)
     -- taken from lua documentation
     copies = copies or {}
     local orig_type = type(orig)
@@ -37,10 +37,10 @@ function smartshop.util.deepcopy(orig, copies)
         else
             copy = {}
             for orig_key, orig_value in next, orig, nil do
-                copy[smartshop.util.deepcopy(orig_key, copies)] = smartshop.util.deepcopy(orig_value, copies)
+                copy[simple_amm.util.deepcopy(orig_key, copies)] = simple_amm.util.deepcopy(orig_value, copies)
             end
             copies[orig] = copy
-            setmetatable(copy, smartshop.util.deepcopy(getmetatable(orig), copies))
+            setmetatable(copy, simple_amm.util.deepcopy(getmetatable(orig), copies))
         end
     else -- number, string, boolean, etc
         copy = orig
@@ -48,13 +48,13 @@ function smartshop.util.deepcopy(orig, copies)
     return copy
 end
 
-function smartshop.util.table_invert(t)
+function simple_amm.util.table_invert(t)
     local inverted = {}
     for k,v in pairs(t) do inverted[v] = k end
     return inverted
 end
 
-function smartshop.util.table_reversed(t)
+function simple_amm.util.table_reversed(t)
     local len = #t
     local reversed = {}
     for i = len,1,-1 do
@@ -63,19 +63,19 @@ function smartshop.util.table_reversed(t)
     return reversed
 end
 
-function smartshop.util.table_contains(t, value)
+function simple_amm.util.table_contains(t, value)
     for _, v in ipairs(t) do
         if v == value then return true end
     end
     return false
 end
 
-function smartshop.util.table_is_empty(t)
+function simple_amm.util.table_is_empty(t)
     for _ in pairs(t) do return false end
     return true
 end
 
-function smartshop.util.pairs_by_keys(t, f)
+function simple_amm.util.pairs_by_keys(t, f)
     local a = {}
     for n in pairs(t) do
         table.insert(a, n)
@@ -92,7 +92,7 @@ function smartshop.util.pairs_by_keys(t, f)
     end
 end
 
-function smartshop.util.pairs_by_values(t, f)
+function simple_amm.util.pairs_by_values(t, f)
     if not f then
         f = function(a, b) return a < b end
     end
@@ -115,7 +115,7 @@ function smartshop.util.pairs_by_values(t, f)
     end
 end
 
-function smartshop.util.round(x)
+function simple_amm.util.round(x)
     -- approved by kahan
     if x % 2 ~= 0.5 then
         return math.floor(x+0.5)
@@ -124,7 +124,7 @@ function smartshop.util.round(x)
     end
 end
 
-function smartshop.util.clone_tmp_inventory(inv_name, src_inv, src_list_name)
+function simple_amm.util.clone_tmp_inventory(inv_name, src_inv, src_list_name)
     local tmp_inv = minetest.create_detached_inventory(inv_name, {
         allow_move = function(inv, from_list, from_index, to_list, to_index, count, player) return count end,
         allow_put = function(inv, listname, index, stack, player) return stack:get_size() end,
@@ -133,7 +133,7 @@ function smartshop.util.clone_tmp_inventory(inv_name, src_inv, src_list_name)
 
     for name, _ in pairs(src_inv:get_lists()) do
         if not tmp_inv:is_empty(name) or tmp_inv:get_size(name) ~= 0 then
-            smartshop.log("error", "attempt to re-use existing temporary inventory %s", inv_name)
+            simple_amm.log("error", "attempt to re-use existing temporary inventory %s", inv_name)
             return
         end
     end
@@ -151,6 +151,6 @@ function smartshop.util.clone_tmp_inventory(inv_name, src_inv, src_list_name)
     return tmp_inv
 end
 
-function smartshop.util.delete_tmp_inventory(inv_name)
+function simple_amm.util.delete_tmp_inventory(inv_name)
     minetest.remove_detached_inventory(inv_name)
 end

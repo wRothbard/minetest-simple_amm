@@ -11,14 +11,14 @@ breaks the node, before the LBM has been run.
 --]]
 
 
-if smartshop.settings.enable_refund then
+if simple_amm.settings.enable_refund then
     minetest.register_lbm({
-        name              = "smartshop:repay_lost_stuff",
+        name              = "simple_amm:repay_lost_stuff",
         nodenames         = {
-            "smartshop:shop",
-            "smartshop:shop_empty",
-            "smartshop:shop_full",
-            "smartshop:shop_used",
+            "simple_amm:amm",
+            "simple_amm:amm_empty",
+            "simple_amm:amm_full",
+            "simple_amm:amm_used",
         },
         run_at_every_load = true,
         action            = function(pos, node)
@@ -26,17 +26,17 @@ if smartshop.settings.enable_refund then
             local meta = minetest.get_meta(pos)
 
             -- don't bother refunding admin shops
-            if smartshop.is_admin(meta) then return end
+            if simple_amm.is_admin(meta) then return end
 
-            local owner = smartshop.get_owner(meta)
-            local inv = smartshop.get_inventory(meta)
+            local owner = simple_amm.get_owner(meta)
+            local inv = simple_amm.get_inventory(meta)
 
-            if smartshop.has_upgraded(meta) then
+            if simple_amm.has_upgraded(meta) then
                 local unrefunded = {}
-                for _, itemstring in ipairs(smartshop.get_refund(meta)) do
+                for _, itemstring in ipairs(simple_amm.get_refund(meta)) do
                     local itemstack = ItemStack(itemstring)
                     if inv:room_for_item("main", itemstack) then
-                        smartshop.log("action", "refunding %s to %s's shop at %s",
+                        simple_amm.log("action", "refunding %s to %s's shop at %s",
                             itemstring, owner, minetest.pos_to_string(pos, 0)
                         )
                         inv:add_item("main", itemstack)
@@ -44,10 +44,10 @@ if smartshop.settings.enable_refund then
                         table.insert(unrefunded, itemstack:to_string())
                     end
                 end
-                if not smartshop.util.table_is_empty(unrefunded) then
-                    smartshop.set_refund(meta, unrefunded)
+                if not simple_amm.util.table_is_empty(unrefunded) then
+                    simple_amm.set_refund(meta, unrefunded)
                 else
-                    smartshop.remove_refund(meta)
+                    simple_amm.remove_refund(meta)
                 end
 
             else
@@ -56,7 +56,7 @@ if smartshop.settings.enable_refund then
                     local pay_stack = inv:get_stack("pay" .. index, 1)
                     if not pay_stack:is_empty() then
                         if inv:room_for_item("main", pay_stack) then
-                            smartshop.log("action", "refunding %s to %s's shop at %s",
+                            simple_amm.log("action", "refunding %s to %s's shop at %s",
                                 pay_stack:to_string(), owner, minetest.pos_to_string(pos, 0)
                             )
                             inv:add_item("main", pay_stack)
@@ -67,7 +67,7 @@ if smartshop.settings.enable_refund then
                     local give_stack = inv:get_stack("give" .. index, 1)
                     if not give_stack:is_empty() then
                         if inv:room_for_item("main", give_stack) then
-                            smartshop.log("action", "refunding %s to %s's shop at %s",
+                            simple_amm.log("action", "refunding %s to %s's shop at %s",
                                 give_stack:to_string(), owner, minetest.pos_to_string(pos, 0)
                             )
                             inv:add_item("main", give_stack)
@@ -76,12 +76,12 @@ if smartshop.settings.enable_refund then
                         end
                     end
                 end
-                if not smartshop.util.table_is_empty(unrefunded) then
-                    smartshop.set_refund(meta, unrefunded)
+                if not simple_amm.util.table_is_empty(unrefunded) then
+                    simple_amm.set_refund(meta, unrefunded)
                 else
-                    smartshop.remove_refund(meta)
+                    simple_amm.remove_refund(meta)
                 end
-                smartshop.set_upgraded(meta)
+                simple_amm.set_upgraded(meta)
             end
 
         end,

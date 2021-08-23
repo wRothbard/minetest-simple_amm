@@ -2,10 +2,10 @@ local function can_receive_payments(pay_stack, give_stack, shop_inv, send_inv)
     local answer = shop_inv:room_for_item("main", pay_stack)
 
     if (not answer) and shop_inv:contains_item("main", give_stack) then
-        local tmp_inv = smartshop.util.clone_tmp_inventory("tmp_can_exchange", shop_inv, "main")
+        local tmp_inv = simple_amm.util.clone_tmp_inventory("tmp_can_exchange", shop_inv, "main")
         tmp_inv:remove_item("main", give_stack)
         answer = tmp_inv:room_for_item("main", pay_stack)
-        smartshop.util.delete_tmp_inventory("tmp_can_exchange")
+        simple_amm.util.delete_tmp_inventory("tmp_can_exchange")
 
     elseif send_inv and send_inv:room_for_item("main", pay_stack) then
         answer = true
@@ -34,24 +34,24 @@ local function get_exchange_status(shop_inv, slot, send_inv, refill_inv)
     end
 end
 
-function smartshop.update_shop_color(pos)
+function simple_amm.update_shop_color(pos)
     --[[
     normal: nothing in the give slots
     full  : no exchanges possible because no room for pay items
     empty : no exchanges possible because no more give items
     used  : pay items in main
     ]]--
-    if not smartshop.is_smartshop(pos) then
+    if not simple_amm.is_simple_amm(pos) then
         return
     end
     local shop_meta    = minetest.get_meta(pos)
-    local shop_inv     = smartshop.get_inventory(shop_meta)
-    local is_unlimited = smartshop.is_unlimited(shop_meta)
-	local send_spos    = smartshop.get_send_spos(shop_meta)
-    local send_pos     = smartshop.util.string_to_pos(send_spos)
+    local shop_inv     = simple_amm.get_inventory(shop_meta)
+    local is_unlimited = simple_amm.is_unlimited(shop_meta)
+	local send_spos    = simple_amm.get_send_spos(shop_meta)
+    local send_pos     = simple_amm.util.string_to_pos(send_spos)
 	local send_inv     = send_pos and minetest.get_meta(send_pos):get_inventory()
-	local refill_spos  = smartshop.get_refill_spos(shop_meta)
-    local refill_pos   = smartshop.util.string_to_pos(refill_spos)
+	local refill_spos  = simple_amm.get_refill_spos(shop_meta)
+    local refill_pos   = simple_amm.util.string_to_pos(refill_spos)
 	local refill_inv   = refill_pos and minetest.get_meta(refill_pos):get_inventory()
 
     local total        = 4
@@ -74,17 +74,17 @@ function smartshop.update_shop_color(pos)
 
     local to_swap
     if total == 0 then
-        to_swap = "smartshop:shop_empty"
+        to_swap = "simple_amm:amm_empty"
     elseif is_unlimited then
-        to_swap = "smartshop:shop_admin"
+        to_swap = "simple_amm:amm_admin"
     elseif full_count == total then
-        to_swap = "smartshop:shop_full"
+        to_swap = "simple_amm:amm_full"
     elseif empty_count == total then
-        to_swap = "smartshop:shop_empty"
+        to_swap = "simple_amm:amm_empty"
     elseif used then
-        to_swap = "smartshop:shop_used"
+        to_swap = "simple_amm:amm_used"
     else
-        to_swap = "smartshop:shop"
+        to_swap = "simple_amm:amm"
     end
 
     local node = minetest.get_node(pos)

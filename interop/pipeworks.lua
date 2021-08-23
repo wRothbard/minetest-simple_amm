@@ -3,12 +3,12 @@ if not minetest.get_modpath("pipeworks") then
 end
 
 local itemstrings = {
-    "smartshop:shop",
-    "smartshop:shop_full",
-    "smartshop:shop_empty",
-    "smartshop:shop_used",
-    "smartshop:shop_admin",
-    "smartshop:wifistorage"
+    "simple_amm:amm",
+    "simple_amm:amm_full",
+    "simple_amm:amm_empty",
+    "simple_amm:amm_used",
+    "simple_amm:amm_admin",
+    "simple_amm:wifistorage"
 }
 
 for _, itemstring in ipairs(itemstrings) do

@@ -1,5 +1,5 @@
 local on_timer
-if smartshop.settings.has_mesecon then
+if simple_amm.settings.has_mesecon then
     function on_timer(pos, elapsed)
         mesecon.receptor_off(pos)
         return false
@@ -10,34 +10,34 @@ end
 
 local function tube_can_insert(pos, node, stack, direction)
     local meta = minetest.get_meta(pos)
-    local inv  = smartshop.get_inventory(meta)
+    local inv  = simple_amm.get_inventory(meta)
     return inv:room_for_item("main", stack)
 end
 
 local function tube_insert(pos, node, stack, direction)
     local meta  = minetest.get_meta(pos)
-    local inv   = smartshop.get_inventory(meta)
+    local inv   = simple_amm.get_inventory(meta)
     local added = inv:add_item("main", stack)
-    smartshop.update_shop_color(pos)
+    simple_amm.update_shop_color(pos)
     return added
 end
 
 local function after_place_node(pos, placer)
     local shop_meta   = minetest.get_meta(pos)
     local player_name = placer:get_player_name()
-    local is_admin = smartshop.util.player_is_admin(player_name) and 1 or 0
-    smartshop.set_owner(shop_meta, player_name)
-    smartshop.set_infotext(shop_meta, ("Shop by: %s"):format(player_name))
-    smartshop.set_admin(shop_meta, is_admin)
-    smartshop.set_unlimited(shop_meta, is_admin)
-    smartshop.set_upgraded(shop_meta)
-    smartshop.update_shop_color(pos)
+    local is_admin = simple_amm.util.player_is_admin(player_name) and 1 or 0
+    simple_amm.set_owner(shop_meta, player_name)
+    simple_amm.set_infotext(shop_meta, ("Shop by: %s"):format(player_name))
+    simple_amm.set_admin(shop_meta, is_admin)
+    simple_amm.set_unlimited(shop_meta, is_admin)
+    simple_amm.set_upgraded(shop_meta)
+    simple_amm.update_shop_color(pos)
 end
 
 local function on_construct(pos)
     local meta = minetest.get_meta(pos)
-    smartshop.set_state(meta, 0) -- mesecons?
-    local inv = smartshop.get_inventory(meta)
+    simple_amm.set_state(meta, 0) -- mesecons?
+    local inv = simple_amm.get_inventory(meta)
     inv:set_size("main", 32)
     inv:set_size("give1", 1)
     inv:set_size("pay1", 1)
@@ -50,18 +50,18 @@ local function on_construct(pos)
 end
 
 local function on_rightclick(pos, node, player, itemstack, pointed_thing)
-    smartshop.shop_showform(pos, player)
+    simple_amm.shop_showform(pos, player)
 end
 
 local function allow_metadata_inventory_put(pos, listname, index, stack, player)
-    if not smartshop.util.can_access(player, pos) then
+    if not simple_amm.util.can_access(player, pos) then
         return 0
     elseif stack:get_wear() ~= 0 then
         return 0
     elseif listname == "main" then
         return stack:get_count()
     else
-        local inv = smartshop.get_inventory(pos)
+        local inv = simple_amm.get_inventory(pos)
         local old_stack = inv:get_stack(listname, index)
         if old_stack:get_name() == stack:get_name() then
             local old_count = old_stack:get_count()
@@ -81,24 +81,24 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 end
 
 local function allow_metadata_inventory_take(pos, listname, index, stack, player)
-    if not smartshop.util.can_access(player, pos) then
+    if not simple_amm.util.can_access(player, pos) then
         return 0
     elseif listname == "main" then
         return stack:get_count()
     else
-        local inv = smartshop.get_inventory(pos)
+        local inv = simple_amm.get_inventory(pos)
         inv:set_stack(listname, index, ItemStack(""))
         return 0
     end
 end
 
 local function allow_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
-    if not smartshop.util.can_access(player, pos) then
+    if not simple_amm.util.can_access(player, pos) then
         return 0
     elseif from_list == "main" and to_list == "main" then
         return count
     elseif from_list == "main" then
-        local inv   = smartshop.get_inventory(pos)
+        local inv   = simple_amm.get_inventory(pos)
         local stack = inv:get_stack(from_list, from_index)
         if allow_metadata_inventory_put(pos, to_list, to_index, stack, player) ~= 0 then
             return count
@@ -106,7 +106,7 @@ local function allow_metadata_inventory_move(pos, from_list, from_index, to_list
             return 0
         end
     elseif to_list == "main" then
-        local inv   = smartshop.get_inventory(pos)
+        local inv   = simple_amm.get_inventory(pos)
         local stack = inv:get_stack(to_list, to_index)
         if allow_metadata_inventory_take(pos, from_list, from_index, stack, player) ~= 0 then
             return count
@@ -120,7 +120,7 @@ end
 
 local function on_metadata_inventory_put(pos, listname, index, stack, player)
     if listname == "main" then
-        smartshop.log("action", "%s put %q in %s @ %s",
+        simple_amm.log("action", "%s put %q in %s @ %s",
                       player:get_player_name(),
                       stack:to_string(),
                       minetest.get_node(pos).name,
@@ -131,7 +131,7 @@ end
 
 local function on_metadata_inventory_take(pos, listname, index, stack, player)
     if listname == "main" then
-        smartshop.log("action", "%s took %q from %s @ %s",
+        simple_amm.log("action", "%s took %q from %s @ %s",
                       player:get_player_name(),
                       stack:to_string(),
                       minetest.get_node(pos).name,
@@ -142,15 +142,15 @@ end
 
 local function can_dig(pos, player)
     local meta  = minetest.get_meta(pos)
-    local inv   = smartshop.get_inventory(meta)
-    local owner = smartshop.get_owner(meta)
-    if (owner == "" or smartshop.util.can_access(player, pos)) and inv:is_empty("main") then
-        smartshop.clear_shop_entities(pos)
+    local inv   = simple_amm.get_inventory(meta)
+    local owner = simple_amm.get_owner(meta)
+    if (owner == "" or simple_amm.util.can_access(player, pos)) and inv:is_empty("main") then
+        simple_amm.clear_shop_entities(pos)
         return true
     end
 end
 
-local smartshop_def                                 = {
+local simple_amm_def                                 = {
     description                   = "Smartshop",
     tiles                         = { "(default_chest_top.png^[colorize:#FFFFFF77)^default_obsidian_glass.png" },
     groups                        = { choppy                  = 2,
@@ -187,38 +187,38 @@ local smartshop_def                                 = {
     on_blast                      = function() end,
 }
 
-local smartshop_full_def                            = smartshop.util.deepcopy(smartshop_def)
-smartshop_full_def.drop                             = "smartshop:shop"
-smartshop_full_def.tiles                            = { "(default_chest_top.png^[colorize:#FFFFFF77)^(default_obsidian_glass.png^[colorize:#0000FF77)" }
-smartshop_full_def.groups.not_in_creative_inventory = 1
+local simple_amm_full_def                            = simple_amm.util.deepcopy(simple_amm_def)
+simple_amm_full_def.drop                             = "simple_amm:amm"
+simple_amm_full_def.tiles                            = { "(default_chest_top.png^[colorize:#FFFFFF77)^(default_obsidian_glass.png^[colorize:#0000FF77)" }
+simple_amm_full_def.groups.not_in_creative_inventory = 1
 
-local smartshop_empty_def                           = smartshop.util.deepcopy(smartshop_full_def)
-smartshop_empty_def.tiles                           = { "(default_chest_top.png^[colorize:#FFFFFF77)^(default_obsidian_glass.png^[colorize:#FF000077)" }
+local simple_amm_empty_def                           = simple_amm.util.deepcopy(simple_amm_full_def)
+simple_amm_empty_def.tiles                           = { "(default_chest_top.png^[colorize:#FFFFFF77)^(default_obsidian_glass.png^[colorize:#FF000077)" }
 
-local smartshop_used_def                            = smartshop.util.deepcopy(smartshop_full_def)
-smartshop_used_def.tiles                            = { "(default_chest_top.png^[colorize:#FFFFFF77)^(default_obsidian_glass.png^[colorize:#00FF0077)" }
+local simple_amm_used_def                            = simple_amm.util.deepcopy(simple_amm_full_def)
+simple_amm_used_def.tiles                            = { "(default_chest_top.png^[colorize:#FFFFFF77)^(default_obsidian_glass.png^[colorize:#00FF0077)" }
 
-local smartshop_admin_def                           = smartshop.util.deepcopy(smartshop_full_def)
-smartshop_admin_def.tiles                           = { "(default_chest_top.png^[colorize:#FFFFFF77)^(default_obsidian_glass.png^[colorize:#00FFFF77)" }
+local simple_amm_admin_def                           = simple_amm.util.deepcopy(simple_amm_full_def)
+simple_amm_admin_def.tiles                           = { "(default_chest_top.png^[colorize:#FFFFFF77)^(default_obsidian_glass.png^[colorize:#00FFFF77)" }
 
-minetest.register_node("smartshop:shop", smartshop_def)
-minetest.register_node("smartshop:shop_full", smartshop_full_def)
-minetest.register_node("smartshop:shop_empty", smartshop_empty_def)
-minetest.register_node("smartshop:shop_used", smartshop_used_def)
-minetest.register_node("smartshop:shop_admin", smartshop_admin_def)
+minetest.register_node("simple_amm:amm", simple_amm_def)
+minetest.register_node("simple_amm:amm_full", simple_amm_full_def)
+minetest.register_node("simple_amm:amm_empty", simple_amm_empty_def)
+minetest.register_node("simple_amm:amm_used", simple_amm_used_def)
+minetest.register_node("simple_amm:amm_admin", simple_amm_admin_def)
 
-smartshop.shop_node_names = {
-    "smartshop:shop",
-    "smartshop:shop_full",
-    "smartshop:shop_empty",
-    "smartshop:shop_used",
-    "smartshop:shop_admin"
+simple_amm.shop_node_names = {
+    "simple_amm:amm",
+    "simple_amm:amm_full",
+    "simple_amm:amm_empty",
+    "simple_amm:amm_used",
+    "simple_amm:amm_admin"
 }
 
-function smartshop.is_smartshop(pos)
+function simple_amm.is_simple_amm(pos)
     local node = minetest.get_node(pos)
     local node_name = node.name
-    for _, name in ipairs(smartshop.shop_node_names) do
+    for _, name in ipairs(simple_amm.shop_node_names) do
         if name == node_name then return true end
     end
     return false

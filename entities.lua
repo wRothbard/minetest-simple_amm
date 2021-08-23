@@ -38,7 +38,7 @@ local function get_image_from_tile(tile)
         end
         if image_name then
             if tile.animation and tile.animation.type == "vertical_frames" and tile.animation.aspect_w and tile.animation.aspect_h then
-                return ("smartshop_animation_mask.png^[resize:%ix%i^[mask:"):format(tile.animation.aspect_w, tile.animation.aspect_h) .. image_name
+                return ("simple_amm_animation_mask.png^[resize:%ix%i^[mask:"):format(tile.animation.aspect_w, tile.animation.aspect_h) .. image_name
             elseif tile.animation and tile.animation.type == "sheet_2d" and tile.animation.frames_w and tile.animation.frames_h then
                 return image_name .. ("^[sheet:%ix%i:0,0"):format(tile.animation.frames_w, tile.animation.frames_h)
             else
@@ -98,7 +98,7 @@ local function get_image(item)
         elseif type(inventory_image) == "table" and #inventory_image == 1 and type(inventory_image[1]) == "string" then
             image = inventory_image[1]
         else
-            smartshop.log("warning", "could not decode inventory image for %s", item)
+            simple_amm.log("warning", "could not decode inventory image for %s", item)
             image = ""  -- UNKNOWN
         end
 
@@ -126,9 +126,9 @@ local function get_image(item)
     end
 
     if (debug or not image or image == "unknown_node.png") and not cache[item] then
-        smartshop.log("warning", "[smartshop] definition for %s", item)
+        simple_amm.log("warning", "[simple_amm] definition for %s", item)
         for key, value in pairs(def) do
-            smartshop.log("warning", "[smartshop]     %q = %q", key, minetest.serialize(value))
+            simple_amm.log("warning", "[simple_amm]     %q = %q", key, minetest.serialize(value))
         end
         cache[item] = true
     end
@@ -165,34 +165,34 @@ local function get_staticdata(self)
     return minetest.serialize({item=self.item, pos=self.pos, index=self.index})
 end
 
-minetest.register_entity("smartshop:item", {
+minetest.register_entity("simple_amm:item", {
     hp_max         = 1,
     visual         = "sprite",
     visual_size    = { x = .40, y = .40 },
     collisionbox   = { 0, 0, 0, 0, 0, 0 },
     physical       = false,
     textures       = { "air" },
-    smartshop2     = true,
+    simple_amm2     = true,
     type           = "",
     on_activate    = on_activate,
     get_staticdata = get_staticdata,
 })
 
 -- for nodebox and mesh drawtypes, which can't be drawn well by the above
-minetest.register_entity("smartshop:item_3d", {
+minetest.register_entity("simple_amm:item_3d", {
     hp_max         = 1,
     visual         = "wielditem",
     visual_size    = { x = .20, y = .20 },
     collisionbox   = { 0, 0, 0, 0, 0, 0 },
     physical       = false,
     textures       = { "air" },
-    smartshop2     = true,
+    simple_amm2     = true,
     type           = "",
     on_activate    = on_activate_3d,
     get_staticdata = get_staticdata,
 })
 
-function smartshop.clear_shop_entities(pos)
+function simple_amm.clear_shop_entities(pos)
     local spos       = minetest.pos_to_string(pos)
     local entities = entities_by_pos[spos] or {}
     for _, existing_entity in pairs(entities) do
@@ -211,13 +211,13 @@ local function add_entity(item, shop_pos, index, param2)
         local base_pos = vector.add(shop_pos, vector.multiply(dir, entity_offset))
         local offset = element_offset_3d[param2 + 1][index]
         entity_pos = vector.add(base_pos, offset)
-        entity_type = "smartshop:item_3d"
+        entity_type = "simple_amm:item_3d"
 
     else
         local base_pos = vector.add(shop_pos, vector.multiply(dir, entity_offset))
         local offset = element_offset[param2 + 1][index]
         entity_pos = vector.add(base_pos, offset)
-        entity_type = "smartshop:item"
+        entity_type = "simple_amm:item"
     end
 
     local e  = minetest.add_entity(
@@ -251,7 +251,7 @@ local function remove_entity(pos, index)
     entities_by_pos[spos] = entities
 end
 
-function smartshop.clear_old_entities(pos)
+function simple_amm.clear_old_entities(pos)
     for _, ob in ipairs(minetest.get_objects_inside_radius(pos, 3)) do
         -- "3" was chosen because "2" doesn't work sometimes. it should work w/ "1" but doesn't.
         -- note that we still check that the entity is related to the current shop
@@ -259,8 +259,8 @@ function smartshop.clear_old_entities(pos)
         if ob then
             local le = ob:get_luaentity()
             if le then
-                if le.smartshop then
-                    -- old smartshop entity
+                if le.simple_amm then
+                    -- old simple_amm entity
                     ob:remove()
                 elseif le.pos and type(le.pos) == "table" and vector.equals(pos, vector.round(le.pos)) then
                     -- entities associated w/ the current pos
@@ -283,8 +283,8 @@ local function update_shop_entity(shop_inv, pos, index, param2)
     end
 end
 
-function smartshop.update_shop_entities(pos)
-    if not smartshop.is_smartshop(pos) then
+function simple_amm.update_shop_entities(pos)
+    if not simple_amm.is_simple_amm(pos) then
         return
     end
 
@@ -292,7 +292,7 @@ function smartshop.update_shop_entities(pos)
     if not element_dir[param2 + 1] then return end
 
     local meta       = minetest.get_meta(pos)
-    local shop_inv   = smartshop.get_inventory(meta)
+    local shop_inv   = simple_amm.get_inventory(meta)
 
     for index = 1, 4 do
         update_shop_entity(shop_inv, pos, index, param2)
