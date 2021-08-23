@@ -81,6 +81,9 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 end
 
 local function allow_metadata_inventory_take(pos, listname, index, stack, player)
+    if string.match(listname, "^pay") or string.match(listname, "^give") then
+        return 0
+    end
     if not simple_amm.util.can_access(player, pos) then
         return 0
     elseif listname == "main" then
@@ -93,6 +96,12 @@ local function allow_metadata_inventory_take(pos, listname, index, stack, player
 end
 
 local function allow_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
+    if string.match(from_list, "^pay") or string.match(from_list, "^give") then
+        return 0
+    end
+    if string.match(to_list, "^pay") or string.match(to_list, "^give") then
+        return 0
+    end
     if not simple_amm.util.can_access(player, pos) then
         return 0
     elseif from_list == "main" and to_list == "main" then
@@ -119,6 +128,9 @@ local function allow_metadata_inventory_move(pos, from_list, from_index, to_list
 end
 
 local function on_metadata_inventory_put(pos, listname, index, stack, player)
+    if string.match(listname, "^pay") or string.match(listname, "^give") then
+        return 0
+    end
     if listname == "main" then
         simple_amm.log("action", "%s put %q in %s @ %s",
                       player:get_player_name(),
