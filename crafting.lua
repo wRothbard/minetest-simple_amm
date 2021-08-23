@@ -1,3 +1,28 @@
+if minetest.get_modpath("smartshop") then
+	minetest.register_craft({
+		type = "shapeless",
+		output = "simple_amm:amm",
+		recipe = { "smartshop:shop "}
+	})
+
+	minetest.register_craft({
+		type = "shapeless",
+		output = "simple_amm:wifistorage",
+		recipe = { "smartshop:wifistorage "}
+	})
+
+	minetest.register_craft({
+		type = "shapeless",
+		output = "smartshop:shop",
+		recipe = { "simple_amm:amm "}
+	})
+
+	minetest.register_craft({
+		type = "shapeless",
+		output = "smartshop:wifistorage",
+		recipe = { "simple_amm:wifistorage "}
+	})
+else
 minetest.register_craft({
 	output = "simple_amm:amm",
 	recipe = {
@@ -15,3 +40,4 @@ minetest.register_craft({
 		{ "default:steel_ingot",           "default:copper_ingot", "default:steel_ingot" },
 	}
 })
+end
