@@ -1,4 +1,15 @@
-# Smartshop Redo
+# Simple AMM
+
+Forked from flux's fork of AiTechEye's smartshop, this simple Automated Market Maker uses the
+existing smartshopinterface but adjusts prices automatically.  Your shop uses its inventory to
+function as both buyer and seller, adjusting prices upward as demand rises and downward as it falls.
+
+Forum thread: https://forum.minetest.net/viewtopic.php?f=9&t=27193
+
+Below description applies to flux's fork of smartshop
+
+
+
 Copyright 2021 flux
 Licenses: code: AGPL-3, media: CC BY-SA-4.0
 Based on https://github.com/AiTechEye/smartshop LGPL-2.1
