@@ -211,6 +211,8 @@ local function buy_item_n(player, pos, n)
     if reason_why_not then
         minetest.chat_send_player(player_name, "Exchange failed: " .. reason_why_not)
     end
+    simple_amm.recalc(pos)
+    simple_amm.shop_showform(pos, player, true)
 end
 
 local function get_shop_owner_gui(spos, shop_meta, is_admin)
