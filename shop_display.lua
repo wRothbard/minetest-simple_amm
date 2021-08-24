@@ -20,7 +20,7 @@ local function get_inv_totals(shop_inv, refill_inv)
 end
 
 local function get_info_lines(owner, shop_inv, inv_totals)
-    local lines = {("(Smartshop by %s) Purchases left:"):format(owner)}
+    local lines = {("(AMMshop by %s) Purchases left:"):format(owner)}
     for i = 1, 4, 1 do
 		local pay_stack  = shop_inv:get_stack("pay" .. i, 1)
 		local give_stack = shop_inv:get_stack("give" .. i, 1)
@@ -50,7 +50,7 @@ function simple_amm.update_shop_info(pos)
     local owner     = simple_amm.get_owner(shop_meta)
 
 	if simple_amm.is_unlimited(shop_meta) then
-        simple_amm.set_infotext(shop_meta, "(Smartshop by %s) Stock is unlimited", owner)
+        simple_amm.set_infotext(shop_meta, "(AMMshop by %s) Stock is unlimited", owner)
         return
     end
 
@@ -67,7 +67,7 @@ function simple_amm.update_shop_info(pos)
 	local lines = get_info_lines(owner, shop_inv, inv_totals)
 
     if #lines == 1 then
-        simple_amm.set_infotext(shop_meta, "(Smartshop by %s)\nThis shop is empty.", owner)
+        simple_amm.set_infotext(shop_meta, "(AMMshop by %s)\nThis shop is empty.", owner)
     else
         simple_amm.set_infotext(shop_meta, table.concat(lines, "\n"):gsub("%%", "%%%%"))
     end

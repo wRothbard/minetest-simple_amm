@@ -114,8 +114,8 @@ local function can_dig(pos, player)
 end
 
 minetest.register_node("simple_amm:wifistorage", {
-    description                   = "Smartshop external storage",
-    tiles                         = { "default_chest_top.png^[colorize:#ffffff77^default_obsidian_glass.png" },
+    description                   = "AMMshop external storage",
+    tiles                         = { "default_chest_top.png^[colorize:#ff777777^default_obsidian_glass.png" },
     groups                        = { choppy = 2,
                                       oddly_breakable_by_hand = 1,
                                       tubedevice = 1,

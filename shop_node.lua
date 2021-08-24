@@ -183,7 +183,7 @@ local function can_dig(pos, player)
 end
 
 local simple_amm_def                                 = {
-    description                   = "Smartshop",
+    description                   = "AMMshop",
     tiles                         = { "(default_chest_top.png^[colorize:#FF777777)^default_obsidian_glass.png" },
     groups                        = { choppy                  = 2,
                                       oddly_breakable_by_hand = 1,
