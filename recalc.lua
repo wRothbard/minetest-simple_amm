@@ -1,5 +1,20 @@
 local fee_decimal = simple_amm.settings.fee_percent / 100
 
+-- calculate the cost to buy n item1, in item2
+local function calc_cost_to_buy(count1, count2, n)
+	local liquidity = count1 * count2
+	if count1 - n > 0 then
+		return math.ceil(((liquidity / (count1 - n)) - count2) * (1 + fee_decimal))
+	end
+	return 0
+end
+
+-- calculate how many item2 you get if you spend n item1
+local function calc_quant_for_spend(count1, count2, n)
+	local liquidity = count1 * count2
+	return math.floor(count2 - (liquidity / (count1 + n * (1 - fee_decimal))))
+end
+
 simple_amm.recalc = function(pos)
 	local meta = minetest.get_meta(pos)
 	simple_amm.set_item1(meta, "")
@@ -53,15 +68,15 @@ simple_amm.recalc = function(pos)
 		local liquidity = count1 * count2
 
 		-- how much does it cost to buy one item1?
-		if count1 - 1 > 0 then
-			local cost_of_one_item1_in_item2 = math.ceil(((liquidity / (count1 - 1)) - count2) * (1 + fee_decimal))
+		local cost_of_one_item1_in_item2 = calc_cost_to_buy(count1, count2, 1)
+		if cost_of_one_item1_in_item2 > 0 then
 			inv:set_stack("pay1", 1, ItemStack({name = item2, count = cost_of_one_item1_in_item2}))
 			inv:set_stack("give1", 1, ItemStack(item1))
 			-- minetest.log("action", "cost_of_one_item1_in_item2: " .. cost_of_one_item1_in_item2)
 		end
 
 		-- how much can you get for spending one item1?
-		local quant_of_item2_for_one_item1 = math.floor(count2 - (liquidity / (count1 + (1 - fee_decimal))))
+		local quant_of_item2_for_one_item1 = calc_quant_for_spend(count1, count2, 1)
 		if quant_of_item2_for_one_item1 > 0 then
 			inv:set_stack("pay2", 1, ItemStack(item1))
 			inv:set_stack("give2", 1, ItemStack({name = item2, count = quant_of_item2_for_one_item1}))
