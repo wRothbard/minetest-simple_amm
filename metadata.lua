@@ -148,3 +148,23 @@ function simple_amm.set_item2(pos_or_meta, value)
     local meta = get_meta(pos_or_meta)
     meta:set_string("item2", value)
 end
+
+function simple_amm.get_bid(pos_or_meta)
+    local meta = get_meta(pos_or_meta)
+    return meta:get_string("bid")
+end
+
+function simple_amm.set_bid(pos_or_meta, value)
+    local meta = get_meta(pos_or_meta)
+    meta:set_string("bid", value)
+end
+
+function simple_amm.set_ask(pos_or_meta, value)
+    local meta = get_meta(pos_or_meta)
+    meta:set_string("ask", value)
+end
+
+function simple_amm.get_ask(pos_or_meta)
+    local meta = get_meta(pos_or_meta)
+    return meta:get_string("ask")
+end

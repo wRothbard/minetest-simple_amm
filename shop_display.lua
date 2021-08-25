@@ -69,7 +69,15 @@ function simple_amm.update_shop_info(pos)
     if #lines == 1 then
         simple_amm.set_infotext(shop_meta, "(AMMshop by %s)\nThis shop is empty.", owner)
     else
-        simple_amm.set_infotext(shop_meta, table.concat(lines, "\n"):gsub("%%", "%%%%"))
+        local item1 = simple_amm.get_item1(shop_meta)
+        local item2 = simple_amm.get_item2(shop_meta)
+	if item1 ~= nil and item1 ~= "" and item2 ~= nil and item2 ~= "" then
+            local bid = simple_amm.get_bid(shop_meta)
+            local ask = simple_amm.get_ask(shop_meta)
+            simple_amm.set_infotext(shop_meta, "(AMMshop by %s) %s BID: %d %s ASK: %d %s", owner, item1, bid, item2, ask, item2)
+        else
+            simple_amm.set_infotext(shop_meta, table.concat(lines, "\n"):gsub("%%", "%%%%"))
+	end
     end
 end
 
