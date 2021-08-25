@@ -84,6 +84,7 @@ simple_amm.recalc = function(pos)
 		-- minetest.log("action", "item2 " .. item2 .. " " .. count2)
 
 		if count1 == count2 then
+			-- minetest.log("action", "equal quantities")
 			simple_amm.set_ask(meta, 2)
 			simple_amm.set_bid(meta, 0.5)
 			inv:set_stack("pay3", 1, ItemStack({name = item2, count = 2}))
@@ -97,7 +98,13 @@ simple_amm.recalc = function(pos)
 				inv:set_stack("pay5", 1, ItemStack({name = item1, count = price2}))
 				inv:set_stack("give5", 1, ItemStack({name = item2, count = 2}))
 			end
-			-- minetest.log("action", "equal quantities")
+			local price3 = calc_cost_to_buy(count1, count2, 3)
+			if price3 > 0 then
+				inv:set_stack("pay1", 1, ItemStack({name = item2, count = price3}))
+				inv:set_stack("give1", 1, ItemStack({name = item1, count = 3}))
+				inv:set_stack("pay6", 1, ItemStack({name = item1, count = price3}))
+				inv:set_stack("give6", 1, ItemStack({name = item2, count = 3}))
+			end
 			return
 		end
 
@@ -120,7 +127,6 @@ simple_amm.recalc = function(pos)
 		end
 
 		-- now what about a x2 "bulk buy"?
-
 		local ask2 = calc_cost_to_buy(count1, count2, 2)
 		if ask2 > 0 then
 			inv:set_stack("pay2", 1, ItemStack({name = item2, count = ask2}))
@@ -132,6 +138,20 @@ simple_amm.recalc = function(pos)
 			inv:set_stack("pay5", 1, ItemStack({name = item1, count = 2}))
 			inv:set_stack("give5", 1, ItemStack({name = item2, count = bid2}))
 			-- minetest.log("action", "quant of item2 for two item1: " .. bid2)
+		end
+
+		-- what about x3 ?
+		local ask3 = calc_cost_to_buy(count1, count2, 3)
+		if ask3 > 0 then
+			inv:set_stack("pay1", 1, ItemStack({name = item2, count = ask3}))
+			inv:set_stack("give1", 1, ItemStack({name = item1, count = 3}))
+			-- minetest.log("action", "cost of three item1 in item2: " .. ask3)
+		end
+		local bid3 = calc_quant_for_spend(count1, count2, 3)
+		if bid3 > 0 then
+			inv:set_stack("pay6", 1, ItemStack({name = item1, count = 3}))
+			inv:set_stack("give6", 1, ItemStack({name = item2, count = bid3}))
+			-- minetest.log("action", "quant of item2 for three item1: " .. bid3)
 		end
 	end
 end
