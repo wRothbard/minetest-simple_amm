@@ -74,7 +74,9 @@ function simple_amm.update_shop_info(pos)
 	if item1 ~= nil and item1 ~= "" and item2 ~= nil and item2 ~= "" then
             local bid = simple_amm.get_bid(shop_meta)
             local ask = simple_amm.get_ask(shop_meta)
-            simple_amm.set_infotext(shop_meta, "(AMMshop by %s) %s BID: %d %s ASK: %d %s", owner, item1, bid, item2, ask, item2)
+            local i1 = item1:gsub(".*:", "")
+            local i2 = item2:gsub(".*:", "")
+            simple_amm.set_infotext(shop_meta, "(AMMshop by %s)\n%s for %s\nBID: %s ASK: %s", owner, i1, i2, bid, ask)
         else
             simple_amm.set_infotext(shop_meta, table.concat(lines, "\n"):gsub("%%", "%%%%"))
 	end
