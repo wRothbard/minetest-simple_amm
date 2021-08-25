@@ -216,18 +216,18 @@ local function buy_item_n(player, pos, n)
 end
 
 local function get_shop_owner_gui(spos, shop_meta, is_admin)
-    local gui          = "size[8,10]"
-             .. "button_exit[6,0;1.5,1;customer;Customer]"
-             .. "label[0,0.2;Item:]"
-             .. "label[0,1.2;Price:]"
-             .. "list[nodemeta:" .. spos .. ";give1;1,0;1,1;]"
-             .. "list[nodemeta:" .. spos .. ";pay1;1,1;1,1;]"
-             .. "list[nodemeta:" .. spos .. ";give2;2,0;1,1;]"
-             .. "list[nodemeta:" .. spos .. ";pay2;2,1;1,1;]"
-             .. "list[nodemeta:" .. spos .. ";give3;3,0;1,1;]"
-             .. "list[nodemeta:" .. spos .. ";pay3;3,1;1,1;]"
-             .. "list[nodemeta:" .. spos .. ";give4;4,0;1,1;]"
-             .. "list[nodemeta:" .. spos .. ";pay4;4,1;1,1;]"
+    local gui          = "size[10,10]"
+             .. "button_exit[7,0;1.5,1;customer;Customer]"
+             .. "label[1,0.2;Item:]"
+             .. "label[1,1.2;Price:]"
+             .. "list[nodemeta:" .. spos .. ";give1;2,0;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";pay1;2,1;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";give2;3,0;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";pay2;3,1;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";give3;4,0;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";pay3;4,1;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";give4;5,0;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";pay4;5,1;1,1;]"
     local send_spos    = simple_amm.get_send_spos(shop_meta)
     local send_pos     = simple_amm.util.string_to_pos(send_spos)
     local refill_spos  = simple_amm.get_refill_spos(shop_meta)
@@ -236,8 +236,8 @@ local function get_shop_owner_gui(spos, shop_meta, is_admin)
     local shop_owner   = simple_amm.get_owner(shop_meta)
 
     if not is_unlimited then
-        gui = gui .. "button_exit[5,0;1,1;tsend;Send]"
-                  .. "button_exit[5,1;1,1;trefill;Refill]"
+        gui = gui .. "button_exit[6,0;1,1;tsend;Send]"
+                  .. "button_exit[6,1;1,1;trefill;Refill]"
     end
 
     if send_pos then
@@ -275,14 +275,14 @@ local function get_shop_owner_gui(spos, shop_meta, is_admin)
     end
 
     if is_unlimited then
-        gui = gui .. "label[0.5,-0.4;Your stock is unlimited]"
+        gui = gui .. "label[1.5,-0.4;Your stock is unlimited]"
     end
     if is_admin and false then
-        gui = gui .. "button[6,1;2.2,1;togglelimit;Toggle limit]"
+        gui = gui .. "button[7,1;2.2,1;togglelimit;Toggle limit]"
     end
     gui = gui
-            .. "list[nodemeta:" .. spos .. ";main;0,2;8,4;]"
-            .. "list[current_player;main;0,6.2;8,4;]"
+            .. "list[nodemeta:" .. spos .. ";main;1,2;8,4;]"
+            .. "list[current_player;main;1,6.2;8,4;]"
             .. "listring[nodemeta:" .. spos .. ";main]"
             .. "listring[current_player;main]"
     return gui
