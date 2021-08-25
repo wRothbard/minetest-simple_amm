@@ -68,18 +68,18 @@ simple_amm.recalc = function(pos)
 		local liquidity = count1 * count2
 
 		-- how much does it cost to buy one item1?
-		local cost_of_one_item1_in_item2 = calc_cost_to_buy(count1, count2, 1)
-		if cost_of_one_item1_in_item2 > 0 then
-			inv:set_stack("pay1", 1, ItemStack({name = item2, count = cost_of_one_item1_in_item2}))
+		local ask = calc_cost_to_buy(count1, count2, 1)
+		if ask > 0 then
+			inv:set_stack("pay1", 1, ItemStack({name = item2, count = ask}))
 			inv:set_stack("give1", 1, ItemStack(item1))
 			-- minetest.log("action", "cost_of_one_item1_in_item2: " .. cost_of_one_item1_in_item2)
 		end
 
 		-- how much can you get for spending one item1?
-		local quant_of_item2_for_one_item1 = calc_quant_for_spend(count1, count2, 1)
-		if quant_of_item2_for_one_item1 > 0 then
+		local bid = calc_quant_for_spend(count1, count2, 1)
+		if bid > 0 then
 			inv:set_stack("pay2", 1, ItemStack(item1))
-			inv:set_stack("give2", 1, ItemStack({name = item2, count = quant_of_item2_for_one_item1}))
+			inv:set_stack("give2", 1, ItemStack({name = item2, count = bid}))
 			-- minetest.log("action", "quant_of_item2_for_one_item1: " .. quant_of_item2_for_one_item1)
 		end
 	end
