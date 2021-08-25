@@ -49,6 +49,10 @@ local function on_construct(pos)
     inv:set_size("pay3", 1)
     inv:set_size("give4", 1)
     inv:set_size("pay4", 1)
+    inv:set_size("give5", 1)
+    inv:set_size("pay5", 1)
+    inv:set_size("give6", 1)
+    inv:set_size("pay6", 1)
 end
 
 local function on_rightclick(pos, node, player, itemstack, pointed_thing)

@@ -275,11 +275,11 @@ local function update_shop_entity(shop_inv, pos, index, param2)
     local give_stack = shop_inv:get_stack("give" .. index, 1)
 
     if not give_stack:is_empty() and give_stack:is_known() then
-        local e = add_entity(give_stack:get_name(), pos, index, param2)
-        set_entity(pos, index, e)
+        local e = add_entity(give_stack:get_name(), pos, index - 1, param2)
+        set_entity(pos, index - 1, e)
 
     else
-        remove_entity(pos, index)
+        remove_entity(pos, index - 1)
     end
 end
 
@@ -294,7 +294,8 @@ function simple_amm.update_shop_entities(pos)
     local meta       = minetest.get_meta(pos)
     local shop_inv   = simple_amm.get_inventory(meta)
 
-    for index = 1, 4 do
+    -- XXX long term this should be switched to just show item1 and item2
+    for index = 2, 5 do
         update_shop_entity(shop_inv, pos, index, param2)
     end
 end

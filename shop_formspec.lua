@@ -217,17 +217,21 @@ end
 
 local function get_shop_owner_gui(spos, shop_meta, is_admin)
     local gui          = "size[10,10]"
-             .. "button_exit[7,0;1.5,1;customer;Customer]"
-             .. "label[1,0.2;Item:]"
-             .. "label[1,1.2;Price:]"
-             .. "list[nodemeta:" .. spos .. ";give1;2,0;1,1;]"
-             .. "list[nodemeta:" .. spos .. ";pay1;2,1;1,1;]"
-             .. "list[nodemeta:" .. spos .. ";give2;3,0;1,1;]"
-             .. "list[nodemeta:" .. spos .. ";pay2;3,1;1,1;]"
-             .. "list[nodemeta:" .. spos .. ";give3;4,0;1,1;]"
-             .. "list[nodemeta:" .. spos .. ";pay3;4,1;1,1;]"
-             .. "list[nodemeta:" .. spos .. ";give4;5,0;1,1;]"
-             .. "list[nodemeta:" .. spos .. ";pay4;5,1;1,1;]"
+             .. "button_exit[8,0;1.5,1;customer;Customer]"
+             .. "label[0,0.2;Item:]"
+             .. "label[0,1.2;Price:]"
+             .. "list[nodemeta:" .. spos .. ";give1;1,0;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";pay1;1,1;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";give2;2,0;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";pay2;2,1;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";give3;3,0;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";pay3;3,1;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";give4;4,0;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";pay4;4,1;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";give5;5,0;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";pay5;5,1;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";give6;6,0;1,1;]"
+             .. "list[nodemeta:" .. spos .. ";pay6;6,1;1,1;]"
     local send_spos    = simple_amm.get_send_spos(shop_meta)
     local send_pos     = simple_amm.util.string_to_pos(send_spos)
     local refill_spos  = simple_amm.get_refill_spos(shop_meta)
@@ -236,8 +240,8 @@ local function get_shop_owner_gui(spos, shop_meta, is_admin)
     local shop_owner   = simple_amm.get_owner(shop_meta)
 
     if not is_unlimited then
-        gui = gui .. "button_exit[6,0;1,1;tsend;Send]"
-                  .. "button_exit[6,1;1,1;trefill;Refill]"
+        gui = gui .. "button_exit[7,0;1,1;tsend;Send]"
+                  .. "button_exit[7,1;1,1;trefill;Refill]"
     end
 
     if send_pos then
@@ -295,18 +299,24 @@ local function get_shop_player_gui(pos, spos, shop_inv)
         .. "label[4,0.2;ASK: " .. simple_amm.get_ask(pos) .. "]"
         .. "label[0,1.2;Item:]"
         .. "label[0,2.2;Price:]"
-        .. "list[nodemeta:" .. spos .. ";give1;2,1;1,1;]"
-        .. "item_image_button[2,2;1,1;" .. shop_inv:get_stack("pay1", 1):get_name()
+        .. "list[nodemeta:" .. spos .. ";give1;1,1;1,1;]"
+        .. "item_image_button[1,2;1,1;" .. shop_inv:get_stack("pay1", 1):get_name()
         .. ";buy1;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay1", 1):get_count() .. "]"
-        .. "list[nodemeta:" .. spos .. ";give2;3,1;1,1;]"
-        .. "item_image_button[3,2;1,1;" .. shop_inv:get_stack("pay2", 1):get_name()
+        .. "list[nodemeta:" .. spos .. ";give2;2,1;1,1;]"
+        .. "item_image_button[2,2;1,1;" .. shop_inv:get_stack("pay2", 1):get_name()
         .. ";buy2;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay2", 1):get_count() .. "]"
-        .. "list[nodemeta:" .. spos .. ";give3;4,1;1,1;]"
-        .. "item_image_button[4,2;1,1;" .. shop_inv:get_stack("pay3", 1):get_name()
+        .. "list[nodemeta:" .. spos .. ";give3;3,1;1,1;]"
+        .. "item_image_button[3,2;1,1;" .. shop_inv:get_stack("pay3", 1):get_name()
         .. ";buy3;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay3", 1):get_count() .. "]"
-        .. "list[nodemeta:" .. spos .. ";give4;5,1;1,1;]"
-        .. "item_image_button[5,2;1,1;" .. shop_inv:get_stack("pay4", 1):get_name()
+        .. "list[nodemeta:" .. spos .. ";give4;4,1;1,1;]"
+        .. "item_image_button[4,2;1,1;" .. shop_inv:get_stack("pay4", 1):get_name()
         .. ";buy4;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay4", 1):get_count() .. "]"
+        .. "list[nodemeta:" .. spos .. ";give5;5,1;1,1;]"
+        .. "item_image_button[5,2;1,1;" .. shop_inv:get_stack("pay5", 1):get_name()
+        .. ";buy4;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay5", 1):get_count() .. "]"
+        .. "list[nodemeta:" .. spos .. ";give6;6,1;1,1;]"
+        .. "item_image_button[6,2;1,1;" .. shop_inv:get_stack("pay6", 1):get_name()
+        .. ";buy4;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay6", 1):get_count() .. "]"
 end
 
 function simple_amm.shop_receive_fields(player, pressed)
@@ -341,6 +351,8 @@ function simple_amm.shop_showform(pos, player, ignore_owner)
     local fpos        = pos.x .. "," .. pos.y .. "," .. pos.z
     local player_name = player:get_player_name()
     local is_owner
+
+    simple_amm.ensure_size6(pos, inv)
 
     if ignore_owner then
         is_owner = false

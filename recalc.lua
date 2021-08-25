@@ -1,5 +1,16 @@
 local fee_decimal = simple_amm.settings.fee_percent / 100
 
+simple_amm.ensure_size6 = function(pos, inv)
+	local size6 = inv:get_size("give6")
+	if not size6 or size6 < 1 then
+		inv:set_size("give5", 1)
+		inv:set_size("pay5", 1)
+		inv:set_size("give6", 1)
+		inv:set_size("pay6", 1)
+		simple_amm.recalc(pos)
+	end
+end
+
 -- calculate the cost to buy n item1, in item2
 local function calc_cost_to_buy(count1, count2, n)
 	local liquidity = count1 * count2
@@ -30,6 +41,10 @@ simple_amm.recalc = function(pos)
 	inv:set_stack("give3", 1, ItemStack(""))
 	inv:set_stack("pay4", 1, ItemStack(""))
 	inv:set_stack("give4", 1, ItemStack(""))
+	inv:set_stack("pay5", 1, ItemStack(""))
+	inv:set_stack("give5", 1, ItemStack(""))
+	inv:set_stack("pay6", 1, ItemStack(""))
+	inv:set_stack("give6", 1, ItemStack(""))
 	local item1
 	local item2
 	local count1 = 0
@@ -71,16 +86,16 @@ simple_amm.recalc = function(pos)
 		if count1 == count2 then
 			simple_amm.set_ask(meta, 2)
 			simple_amm.set_bid(meta, 0.5)
-			inv:set_stack("pay2", 1, ItemStack({name = item2, count = 2}))
-			inv:set_stack("give2", 1, ItemStack(item1))
-			inv:set_stack("pay3", 1, ItemStack({name = item1, count = 2}))
-			inv:set_stack("give3", 1, ItemStack(item2))
+			inv:set_stack("pay3", 1, ItemStack({name = item2, count = 2}))
+			inv:set_stack("give3", 1, ItemStack(item1))
+			inv:set_stack("pay4", 1, ItemStack({name = item1, count = 2}))
+			inv:set_stack("give4", 1, ItemStack(item2))
 			local price2 = calc_cost_to_buy(count1, count2, 2)
 			if price2 > 0 then
-				inv:set_stack("pay1", 1, ItemStack({name = item2, count = price2}))
-				inv:set_stack("give1", 1, ItemStack({name = item1, count = 2}))
-				inv:set_stack("pay4", 1, ItemStack({name = item1, count = price2}))
-				inv:set_stack("give4", 1, ItemStack({name = item2, count = 2}))
+				inv:set_stack("pay2", 1, ItemStack({name = item2, count = price2}))
+				inv:set_stack("give2", 1, ItemStack({name = item1, count = 2}))
+				inv:set_stack("pay5", 1, ItemStack({name = item1, count = price2}))
+				inv:set_stack("give5", 1, ItemStack({name = item2, count = 2}))
 			end
 			-- minetest.log("action", "equal quantities")
 			return
@@ -90,8 +105,8 @@ simple_amm.recalc = function(pos)
 		local ask = calc_cost_to_buy(count1, count2, 1)
 		if ask > 0 then
 			simple_amm.set_ask(meta, ask)
-			inv:set_stack("pay2", 1, ItemStack({name = item2, count = ask}))
-			inv:set_stack("give2", 1, ItemStack(item1))
+			inv:set_stack("pay3", 1, ItemStack({name = item2, count = ask}))
+			inv:set_stack("give3", 1, ItemStack(item1))
 			-- minetest.log("action", "cost_of_one_item1_in_item2 (ask): " .. cost_of_one_item1_in_item2)
 		end
 
@@ -99,8 +114,8 @@ simple_amm.recalc = function(pos)
 		local bid = calc_quant_for_spend(count1, count2, 1)
 		if bid > 0 then
 			simple_amm.set_bid(meta, bid)
-			inv:set_stack("pay3", 1, ItemStack(item1))
-			inv:set_stack("give3", 1, ItemStack({name = item2, count = bid}))
+			inv:set_stack("pay4", 1, ItemStack(item1))
+			inv:set_stack("give4", 1, ItemStack({name = item2, count = bid}))
 			-- minetest.log("action", "quant_of_item2_for_one_item1 (bid): " .. quant_of_item2_for_one_item1)
 		end
 
@@ -108,14 +123,14 @@ simple_amm.recalc = function(pos)
 
 		local ask2 = calc_cost_to_buy(count1, count2, 2)
 		if ask2 > 0 then
-			inv:set_stack("pay1", 1, ItemStack({name = item2, count = ask2}))
-			inv:set_stack("give1", 1, ItemStack({name = item1, count = 2}))
+			inv:set_stack("pay2", 1, ItemStack({name = item2, count = ask2}))
+			inv:set_stack("give2", 1, ItemStack({name = item1, count = 2}))
 			-- minetest.log("action", "cost of two item1 in item2: " .. ask2)
 		end
 		local bid2 = calc_quant_for_spend(count1, count2, 2)
 		if bid2 > 0 then
-			inv:set_stack("pay4", 1, ItemStack({name = item1, count = 2}))
-			inv:set_stack("give4", 1, ItemStack({name = item2, count = bid2}))
+			inv:set_stack("pay5", 1, ItemStack({name = item1, count = 2}))
+			inv:set_stack("give5", 1, ItemStack({name = item2, count = bid2}))
 			-- minetest.log("action", "quant of item2 for two item1: " .. bid2)
 		end
 	end

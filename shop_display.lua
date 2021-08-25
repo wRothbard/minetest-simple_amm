@@ -21,7 +21,7 @@ end
 
 local function get_info_lines(owner, shop_inv, inv_totals)
     local lines = {("(AMMshop by %s) Purchases left:"):format(owner)}
-    for i = 1, 4, 1 do
+    for i = 1, 6, 1 do
 		local pay_stack  = shop_inv:get_stack("pay" .. i, 1)
 		local give_stack = shop_inv:get_stack("give" .. i, 1)
 		if not pay_stack:is_empty() and not give_stack:is_empty() and give_stack:is_known() and give_stack:get_wear() == 0 then
