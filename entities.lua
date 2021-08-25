@@ -292,9 +292,19 @@ function simple_amm.update_shop_entities(pos)
     if not element_dir[param2 + 1] then return end
 
     local meta       = minetest.get_meta(pos)
+    local item1      = simple_amm.get_item1(meta)
+    local item2      = simple_amm.get_item2(meta)
+    if item1 ~= nil and item1 ~= "" and item2 ~= nil and item2 ~= "" then
+	    local e = add_entity(item2, pos, 1, param2)  -- lesser count item first
+	    set_entity(pos, 1, e)
+	    e = add_entity(item1, pos, 2, param2)
+	    set_entity(pos, 2, e)
+	    remove_entity(pos, 3)
+	    remove_entity(pos, 4)
+	    return
+    end
     local shop_inv   = simple_amm.get_inventory(meta)
 
-    -- XXX long term this should be switched to just show item1 and item2
     for index = 2, 5 do
         update_shop_entity(shop_inv, pos, index, param2)
     end
