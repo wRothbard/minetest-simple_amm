@@ -1,7 +1,7 @@
 # Simple AMM
 
 Forked from flux's fork of AiTechEye's smartshop, this simple Automated Market Maker uses the
-existing smartshopinterface but adjusts prices automatically.  Your shop uses its inventory to
+existing smartshop interface but adjusts prices automatically.  Your shop uses its inventory to
 function as both buyer and seller, adjusting prices upward as demand rises and downward as it falls.
 
 Forum thread: https://forum.minetest.net/viewtopic.php?f=9&t=27193
