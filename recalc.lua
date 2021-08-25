@@ -67,7 +67,17 @@ simple_amm.recalc = function(pos)
 		simple_amm.set_item2(meta, item2)
 		-- minetest.log("action", "item1 " .. item1 .. " " .. count1)
 		-- minetest.log("action", "item2 " .. item2 .. " " .. count2)
-		local liquidity = count1 * count2
+
+		if count1 == count2 then
+			simple_amm.set_ask(meta, 2)
+			simple_amm.set_bid(meta, 0.5)
+			inv:set_stack("pay1", 1, ItemStack({name = item2, count = 2}))
+			inv:set_stack("give1", 1, ItemStack(item1))
+			inv:set_stack("pay2", 1, ItemStack({name = item1, count = 2}))
+			inv:set_stack("give2", 1, ItemStack(item2))
+			-- minetest.log("action", "equal quantities")
+			return
+		end
 
 		-- how much does it cost to buy one item1?
 		local ask = calc_cost_to_buy(count1, count2, 1)
