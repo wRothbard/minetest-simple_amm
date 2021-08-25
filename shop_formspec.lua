@@ -288,22 +288,24 @@ local function get_shop_owner_gui(spos, shop_meta, is_admin)
     return gui
 end
 
-local function get_shop_player_gui(spos, shop_inv)
-    return "size[8,6]"
-        .. "list[current_player;main;0,2.2;8,4;]"
-        .. "label[0,0.2;Item:]"
-        .. "label[0,1.2;Price:]"
-        .. "list[nodemeta:" .. spos .. ";give1;2,0;1,1;]"
-        .. "item_image_button[2,1;1,1;" .. shop_inv:get_stack("pay1", 1):get_name()
+local function get_shop_player_gui(pos, spos, shop_inv)
+    return "size[8,7]"
+        .. "list[current_player;main;0,3.2;8,4;]"
+        .. "label[2,0.2;BID: " .. simple_amm.get_bid(pos) .. "]"
+        .. "label[4,0.2;ASK: " .. simple_amm.get_ask(pos) .. "]"
+        .. "label[0,1.2;Item:]"
+        .. "label[0,2.2;Price:]"
+        .. "list[nodemeta:" .. spos .. ";give1;2,1;1,1;]"
+        .. "item_image_button[2,2;1,1;" .. shop_inv:get_stack("pay1", 1):get_name()
         .. ";buy1;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay1", 1):get_count() .. "]"
-        .. "list[nodemeta:" .. spos .. ";give2;3,0;1,1;]"
-        .. "item_image_button[3,1;1,1;" .. shop_inv:get_stack("pay2", 1):get_name()
+        .. "list[nodemeta:" .. spos .. ";give2;3,1;1,1;]"
+        .. "item_image_button[3,2;1,1;" .. shop_inv:get_stack("pay2", 1):get_name()
         .. ";buy2;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay2", 1):get_count() .. "]"
-        .. "list[nodemeta:" .. spos .. ";give3;4,0;1,1;]"
-        .. "item_image_button[4,1;1,1;" .. shop_inv:get_stack("pay3", 1):get_name()
+        .. "list[nodemeta:" .. spos .. ";give3;4,1;1,1;]"
+        .. "item_image_button[4,2;1,1;" .. shop_inv:get_stack("pay3", 1):get_name()
         .. ";buy3;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay3", 1):get_count() .. "]"
-        .. "list[nodemeta:" .. spos .. ";give4;5,0;1,1;]"
-        .. "item_image_button[5,1;1,1;" .. shop_inv:get_stack("pay4", 1):get_name()
+        .. "list[nodemeta:" .. spos .. ";give4;5,1;1,1;]"
+        .. "item_image_button[5,2;1,1;" .. shop_inv:get_stack("pay4", 1):get_name()
         .. ";buy4;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay4", 1):get_count() .. "]"
 end
 
@@ -359,7 +361,7 @@ function simple_amm.shop_showform(pos, player, ignore_owner)
 
         gui = get_shop_owner_gui(fpos, meta, player_is_admin)
     else
-        gui = get_shop_player_gui(fpos, inv)
+        gui = get_shop_player_gui(pos, fpos, inv)
     end
 
     simple_amm.player_pos[player_name] = pos
