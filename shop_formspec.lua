@@ -34,9 +34,10 @@ local function toggle_limit(player, pos)
 end
 
 local function get_buy_n(pressed)
-    for n = 1, 4 do
+    for n = 1, 6 do
         if pressed["buy" .. n] then return n end
     end
+    return false
 end
 
 local function player_has_used_tool(player_inv, pay_stack)
@@ -313,10 +314,10 @@ local function get_shop_player_gui(pos, spos, shop_inv)
         .. ";buy4;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay4", 1):get_count() .. "]"
         .. "list[nodemeta:" .. spos .. ";give5;5,1;1,1;]"
         .. "item_image_button[5,2;1,1;" .. shop_inv:get_stack("pay5", 1):get_name()
-        .. ";buy4;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay5", 1):get_count() .. "]"
+        .. ";buy5;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay5", 1):get_count() .. "]"
         .. "list[nodemeta:" .. spos .. ";give6;6,1;1,1;]"
         .. "item_image_button[6,2;1,1;" .. shop_inv:get_stack("pay6", 1):get_name()
-        .. ";buy4;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay6", 1):get_count() .. "]"
+        .. ";buy6;\n\n\b\b\b\b\b" .. shop_inv:get_stack("pay6", 1):get_count() .. "]"
 end
 
 function simple_amm.shop_receive_fields(player, pressed)
