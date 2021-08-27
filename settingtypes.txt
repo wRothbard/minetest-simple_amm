@@ -14,4 +14,4 @@ simple_amm.enable_refund (Enable refunds on upgrading from the main fork) bool t
 simple_amm.admin_shop_privs (Privs for admin shops) string simple_amm_admin
 
 # Percent fee to charge on each transaction.  Also any rounding results in fees
-simple_amm.fee_percent int 1
+simple_amm.fee_percent (Fee charged on each transaction) int 1
