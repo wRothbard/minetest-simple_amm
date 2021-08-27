@@ -28,6 +28,7 @@ end
 
 simple_amm.recalc = function(pos)
 	local meta = minetest.get_meta(pos)
+	local spos = minetest.pos_to_string(pos)
 	simple_amm.set_item1(meta, "")
 	simple_amm.set_item2(meta, "")
 	simple_amm.set_bid(meta, 0)
@@ -84,7 +85,7 @@ simple_amm.recalc = function(pos)
 		-- minetest.log("action", "item2 " .. item2 .. " " .. count2)
 
 		if count1 == count2 then
-			-- minetest.log("action", "equal quantities")
+			minetest.log("action", spos .. ": equal quantities of " .. item1 .. "/" .. item2)
 			simple_amm.set_ask(meta, 2)
 			simple_amm.set_bid(meta, 0.5)
 			inv:set_stack("pay3", 1, ItemStack({name = item2, count = 2}))
@@ -114,7 +115,7 @@ simple_amm.recalc = function(pos)
 			simple_amm.set_ask(meta, ask)
 			inv:set_stack("pay3", 1, ItemStack({name = item2, count = ask}))
 			inv:set_stack("give3", 1, ItemStack(item1))
-			-- minetest.log("action", "cost_of_one_item1_in_item2 (ask): " .. cost_of_one_item1_in_item2)
+			minetest.log("action", spos .. ": cost_of_one_item1_in_item2 (ask): " .. ask .. " " .. item2 .. " for one " .. item1)
 		end
 
 		-- how much can you get for spending one item1?
@@ -123,7 +124,7 @@ simple_amm.recalc = function(pos)
 			simple_amm.set_bid(meta, bid)
 			inv:set_stack("pay4", 1, ItemStack(item1))
 			inv:set_stack("give4", 1, ItemStack({name = item2, count = bid}))
-			-- minetest.log("action", "quant_of_item2_for_one_item1 (bid): " .. quant_of_item2_for_one_item1)
+			minetest.log("action", spos .. ": quant_of_item2_for_one_item1 (bid): " .. bid .. " " .. item2 .. " for one " .. item1)
 		end
 
 		-- now what about a x2 "bulk buy"?
