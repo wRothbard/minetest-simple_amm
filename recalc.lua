@@ -15,7 +15,10 @@ end
 local function calc_cost_to_buy(count1, count2, n)
 	local liquidity = count1 * count2
 	if count1 - n > 0 then
-		return math.ceil(((liquidity / (count1 - n)) - count2) * (1 + fee_decimal))
+		local cost = math.ceil(((liquidity / (count1 - n)) - count2) * (1 + fee_decimal))
+		if cost <= 65535 then
+			return cost
+		end
 	end
 	return 0
 end
@@ -23,7 +26,11 @@ end
 -- calculate how many item2 you get if you spend n item1
 local function calc_quant_for_spend(count1, count2, n)
 	local liquidity = count1 * count2
-	return math.floor(count2 - (liquidity / (count1 + n * (1 - fee_decimal))))
+	local quant = math.floor(count2 - (liquidity / (count1 + n * (1 - fee_decimal))))
+	if quant <= 65535 then
+		return quant
+	end
+	return 0
 end
 
 simple_amm.recalc = function(pos)
